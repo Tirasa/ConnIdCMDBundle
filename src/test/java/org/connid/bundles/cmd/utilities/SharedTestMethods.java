@@ -23,7 +23,13 @@
  */
 package org.connid.bundles.cmd.utilities;
 
+import java.util.Set;
 import org.connid.bundles.cmd.CmdConfiguration;
+import org.identityconnectors.common.CollectionUtil;
+import org.identityconnectors.common.security.GuardedString;
+import org.identityconnectors.framework.common.objects.Attribute;
+import org.identityconnectors.framework.common.objects.AttributeBuilder;
+import org.identityconnectors.framework.common.objects.Name;
 
 public class SharedTestMethods {
 
@@ -31,6 +37,26 @@ public class SharedTestMethods {
         // create the connector configuration..
         CmdConfiguration config = new CmdConfiguration();
         config.setTestCmdPath("/tmp/test.sh");
+        config.setCreateCmdPath("/tmp/test.sh");
         return config;
+    }
+
+    protected final Set<Attribute> createSetOfAttributes(final Name name,
+            final String password, final boolean status) {
+        AttributesTestValue attrs = new AttributesTestValue();
+        GuardedString encPassword = null;
+        if (password != null) {
+            encPassword = new GuardedString(password.toCharArray());
+        }
+
+        final Set<Attribute> attributes = CollectionUtil.newSet(
+                AttributeBuilder.buildPassword(encPassword));
+        attributes.add(AttributeBuilder.buildEnabled(status));
+        attributes.add(AttributeBuilder.build("comment", CollectionUtil.newSet(
+                attrs.getUsername())));
+        attributes.add(AttributeBuilder.build("shell", CollectionUtil.newSet(
+                "/bin/rbash")));
+        attributes.add(name);
+        return attributes;
     }
 }

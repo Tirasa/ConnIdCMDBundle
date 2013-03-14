@@ -30,10 +30,11 @@ import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
 public class CmdTest {
-    
+
     private static final Log LOG = Log.getLog(CmdTest.class);
 
     private CmdConnection unixConnection = null;
+
     private CmdConfiguration cmdConfiguration = null;
 
     public CmdTest(final CmdConfiguration cmdConfiguration) {
@@ -51,7 +52,6 @@ public class CmdTest {
     }
 
     private void execute() throws IOException {
-        unixConnection.execute(cmdConfiguration.getTestCmdPath());
+        unixConnection.execute(cmdConfiguration.getTestCmdPath(), null);
     }
-    
 }

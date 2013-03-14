@@ -26,11 +26,8 @@ package org.connid.bundles.cmd;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.identityconnectors.common.logging.Log;
 
 public class CmdConnection {
-
-    private static final Log LOG = Log.getLog(CmdConnection.class);
 
     private static CmdConnection cmdConnection = null;
 
@@ -43,9 +40,9 @@ public class CmdConnection {
 
     private CmdConnection() {}
     
-    public String execute(final String cmd) throws IOException {
+    public String execute(final String cmd, final String[] envp) throws IOException {
         Runtime runtime = Runtime.getRuntime();
-        Process proc = runtime.exec(cmd);
+        Process proc = runtime.exec(cmd, envp);
         return readOutput(proc);
     }
     
