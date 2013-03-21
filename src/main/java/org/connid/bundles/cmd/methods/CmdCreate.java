@@ -25,7 +25,11 @@ package org.connid.bundles.cmd.methods;
 
 import java.util.Iterator;
 import java.util.Set;
+import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.framework.common.objects.Attribute;
+import org.identityconnectors.framework.common.objects.AttributeUtil;
+import org.identityconnectors.framework.common.objects.Name;
+import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdCreate extends CmdExec {
 
@@ -38,8 +42,18 @@ public class CmdCreate extends CmdExec {
         scriptPath = path;
     }
 
-    public void execCreateCmd() {
+    public Uid execCreateCmd() {
+
+        final Name name = AttributeUtil.getNameFromAttributes(attrs);
+
+        if (name == null || StringUtil.isBlank(name.getNameValue())) {
+            throw new IllegalArgumentException(
+                    "No Name attribute provided in the attributes");
+        }
+
         exec(scriptPath, createEnv());
+        return new Uid(name.getNameValue());
+
     }
 
     private String[] createEnv() {

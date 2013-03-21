@@ -21,28 +21,28 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  * ====================
  */
-package org.connid.bundles.cmd.methods;
+package org.connid.bundles.cmd;
 
-import java.io.IOException;
-import org.connid.bundles.cmd.CmdConnection;
-import org.identityconnectors.common.logging.Log;
-import org.identityconnectors.framework.common.exceptions.ConnectorException;
+import org.connid.bundles.cmd.search.Operand;
+import org.connid.bundles.cmd.search.Operator;
+import org.identityconnectors.common.StringUtil;
+import org.identityconnectors.framework.common.objects.AttributeUtil;
+import org.identityconnectors.framework.common.objects.filter.AbstractFilterTranslator;
+import org.identityconnectors.framework.common.objects.filter.EqualsFilter;
 
-public abstract class CmdExec {
-
-    private static final Log LOG = Log.getLog(CmdExec.class);
-
-    protected String exec(final String path, String[] env) {
-        try {
-            return doExec(path, env);
-        } catch (Exception e) {
-            LOG.error(e, "error executing script: " + path);
-            throw new ConnectorException(e);
+public class CmdFilterTranslator extends AbstractFilterTranslator<Operand>{
+    @Override
+    protected Operand createEqualsExpression(final EqualsFilter filter,
+            final boolean not) {
+        if (filter == null) {
+            return null;
         }
+        String value = AttributeUtil.getAsStringValue(filter.getAttribute());
+        if (StringUtil.isBlank(value)) {
+            return null;
+        }
+        return new Operand(Operator.EQ,
+                filter.getAttribute().getName(), value, not);
     }
-
-    private String doExec(final String path, final String[] env) throws IOException {
-        CmdConnection cmdConnection = CmdConnection.openConnection();
-        return cmdConnection.execute(path, env);
-    }
+    
 }

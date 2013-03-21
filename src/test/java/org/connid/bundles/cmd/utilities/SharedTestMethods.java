@@ -38,6 +38,7 @@ public class SharedTestMethods {
         CmdConfiguration config = new CmdConfiguration();
         config.setTestCmdPath("/tmp/test.sh");
         config.setCreateCmdPath("/tmp/test.sh");
+        config.setSearchCmdPath("/tmp/test.sh");
         return config;
     }
 

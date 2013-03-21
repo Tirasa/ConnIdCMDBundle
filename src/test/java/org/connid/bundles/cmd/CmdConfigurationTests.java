@@ -23,6 +23,24 @@
  */
 package org.connid.bundles.cmd;
 
-public class CmdConfigurationTests {
+import org.connid.bundles.cmd.utilities.SharedTestMethods;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class CmdConfigurationTests extends SharedTestMethods {
+    
+    /**
+     * Tests setting and validating the parameters provided.
+     */
+    @Test
+    public final void testValidate() {
+        CmdConfiguration config = new CmdConfiguration();
+        try {
+            config.validate();
+            Assert.fail();
+        } catch (RuntimeException e) {
+            // expected because configuration is incomplete
+        }
+    }
     
 }

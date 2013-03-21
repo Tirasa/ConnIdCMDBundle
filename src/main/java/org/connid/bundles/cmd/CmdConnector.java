@@ -23,26 +23,32 @@
  */
 package org.connid.bundles.cmd;
 
+import java.net.ConnectException;
 import java.util.Set;
 import org.connid.bundles.cmd.methods.CmdCreate;
 import org.connid.bundles.cmd.methods.CmdDelete;
+import org.connid.bundles.cmd.methods.CmdExecuteQuery;
 import org.connid.bundles.cmd.methods.CmdTest;
 import org.connid.bundles.cmd.methods.CmdUpdate;
+import org.connid.bundles.cmd.search.Operand;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationOptions;
+import org.identityconnectors.framework.common.objects.ResultsHandler;
 import org.identityconnectors.framework.common.objects.Uid;
+import org.identityconnectors.framework.common.objects.filter.FilterTranslator;
 import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.Connector;
 import org.identityconnectors.framework.spi.ConnectorClass;
 import org.identityconnectors.framework.spi.operations.CreateOp;
 import org.identityconnectors.framework.spi.operations.DeleteOp;
+import org.identityconnectors.framework.spi.operations.SearchOp;
 import org.identityconnectors.framework.spi.operations.TestOp;
 import org.identityconnectors.framework.spi.operations.UpdateOp;
 
 @ConnectorClass(configurationClass = CmdConfiguration.class, displayNameKey = "cmd.connector.display")
-public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, TestOp {
+public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, TestOp, SearchOp<Operand> {
 
     private static final Log LOG = Log.getLog(CmdConnector.class);
 
@@ -54,7 +60,7 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     }
 
     @Override
-    public void init(Configuration configuration) {
+    public void init(final Configuration configuration) {
         cmdConfiguration = (CmdConfiguration) configuration;
     }
 
@@ -64,21 +70,18 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     }
 
     @Override
-    public Uid create(ObjectClass oc,
-            Set<Attribute> set, OperationOptions oo) {
-        new CmdCreate(cmdConfiguration.getCreateCmdPath(), set).execCreateCmd();
-        return new Uid("mas");
+    public Uid create(final ObjectClass oc, final Set<Attribute> set, final OperationOptions oo) {
+        return new CmdCreate(cmdConfiguration.getCreateCmdPath(), set).execCreateCmd();
     }
 
     @Override
-    public Uid update(ObjectClass oc, Uid uid,
-            Set<Attribute> set, OperationOptions oo) {
+    public Uid update(final ObjectClass oc, Uid uid, final Set<Attribute> set, final OperationOptions oo) {
         new CmdUpdate(cmdConfiguration.getCreateCmdPath(), uid, set).execUpdateCmd();
         return new Uid("mas");
     }
 
     @Override
-    public void delete(ObjectClass oc, Uid uid, OperationOptions oo) {
+    public void delete(final ObjectClass oc, final Uid uid, final OperationOptions oo) {
         new CmdDelete(cmdConfiguration.getDeleteCmdPath(), uid).execDeleteCmd();
     }
 
@@ -86,5 +89,24 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     public void test() {
         LOG.info("Remote connection test");
         new CmdTest(cmdConfiguration).test();
+    }
+
+    @Override
+    public void executeQuery(final ObjectClass oc, final Operand t, final ResultsHandler rh,
+            final OperationOptions oo) {
+        try {
+            new CmdExecuteQuery(cmdConfiguration.getSearchCmdPath(), t, rh).execQuery();
+
+        } catch (ConnectException ex) {
+            LOG.error("Error in connection process", ex);
+        }
+    }
+
+    @Override
+    public FilterTranslator<Operand> createFilterTranslator(final ObjectClass oc, final OperationOptions oo) {
+        if (oc == null || (!oc.equals(ObjectClass.ACCOUNT)) && (!oc.equals(ObjectClass.GROUP))) {
+            throw new IllegalArgumentException("Invalid objectclass");
+        }
+        return new CmdFilterTranslator();
     }
 }
