@@ -75,7 +75,7 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
 
     @Override
     public Uid update(final ObjectClass oc, Uid uid, final Set<Attribute> set, final OperationOptions oo) {
-        new CmdUpdate(cmdConfiguration.getCreateCmdPath(), uid, set).execUpdateCmd();
+        new CmdUpdate(cmdConfiguration.getUpdateCmdPath(), uid, set).execUpdateCmd();
         return new Uid("mas");
     }
 
