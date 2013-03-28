@@ -22,9 +22,12 @@
  */
 package org.connid.bundles.cmd.methods;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import org.identityconnectors.framework.common.objects.Attribute;
+import org.identityconnectors.framework.common.objects.AttributeUtil;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdUpdate extends CmdExec {
@@ -46,15 +49,20 @@ public class CmdUpdate extends CmdExec {
     }
 
     private String[] createEnv() {
-        String[] arrayAttributes = new String[attrs.size() + 1];
+        final List<String> res = new ArrayList<String>();
         final Iterator attributes = attrs.iterator();
+
         int index = 0;
+
         while (attributes.hasNext()) {
             Attribute attribute = (Attribute) attributes.next();
-            arrayAttributes[index] = attribute.getName() + "=" + attribute.getValue().get(0);
+            res.add(attribute.getName() + "=" + attribute.getValue().get(0));
             index++;
         }
-        arrayAttributes[attrs.size()] = "UIIIIIIIIIIIIID=" + uid;
-        return arrayAttributes;
+
+        if (AttributeUtil.find(Uid.NAME, attrs) == null) {
+            res.add(Uid.NAME + "=" + uid);
+        }
+        return res.toArray(new String[res.size()]);
     }
 }

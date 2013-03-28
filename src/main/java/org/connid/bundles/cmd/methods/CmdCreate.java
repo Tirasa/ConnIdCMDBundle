@@ -22,7 +22,9 @@
  */
 package org.connid.bundles.cmd.methods;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.framework.common.objects.Attribute;
@@ -56,14 +58,17 @@ public class CmdCreate extends CmdExec {
     }
 
     private String[] createEnv() {
-        String[] arrayAttributes = new String[attrs.size()];
+        final List<String> res = new ArrayList<String>();
         final Iterator attributes = attrs.iterator();
+
         int index = 0;
+
         while (attributes.hasNext()) {
             Attribute attribute = (Attribute) attributes.next();
-            arrayAttributes[index] = attribute.getName() + "=" + attribute.getValue().get(0);
+            res.add(attribute.getName() + "=" + attribute.getValue().get(0));
             index++;
         }
-        return arrayAttributes;
+
+        return res.toArray(new String[res.size()]);
     }
 }

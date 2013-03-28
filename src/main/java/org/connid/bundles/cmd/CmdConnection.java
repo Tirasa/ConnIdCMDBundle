@@ -50,7 +50,7 @@ public class CmdConnection {
         LOG.info("Execute script {0} {1}", cmd, Arrays.asList(envp == null ? new String[0] : envp));
 
         final ProcessBuilder builder = new ProcessBuilder(cmd.split(" "));
-        
+
         if (envp != null) {
             for (String env : envp) {
                 final Map.Entry entry = StringUtil.toProperties(env).entrySet().iterator().next();

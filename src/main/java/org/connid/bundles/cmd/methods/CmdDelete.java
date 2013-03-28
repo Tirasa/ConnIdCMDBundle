@@ -40,8 +40,6 @@ public class CmdDelete extends CmdExec {
     }
 
     private String[] createEnv() {
-        String[] arrayAttributes = new String[1];
-        arrayAttributes[0] = "__NAME__=" + uid;
-        return arrayAttributes;
+        return new String[]{uid.getName() + "=" + uid.getUidValue()};
     }
 }
