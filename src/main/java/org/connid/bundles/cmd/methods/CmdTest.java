@@ -22,35 +22,19 @@
  */
 package org.connid.bundles.cmd.methods;
 
-import java.io.IOException;
-import org.connid.bundles.cmd.CmdConfiguration;
-import org.connid.bundles.cmd.CmdConnection;
 import org.identityconnectors.common.logging.Log;
-import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
-public class CmdTest {
+public class CmdTest extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdTest.class);
 
-    private CmdConnection unixConnection = null;
+    private String scriptPath;
 
-    private CmdConfiguration cmdConfiguration = null;
-
-    public CmdTest(final CmdConfiguration cmdConfiguration) {
-        unixConnection = CmdConnection.openConnection();
-        this.cmdConfiguration = cmdConfiguration;
+    public CmdTest(final String scriptPath) {
+        this.scriptPath = scriptPath;
     }
 
     public final void test() {
-        try {
-            execute();
-        } catch (Exception e) {
-            LOG.error(e, "error during test connection");
-            throw new ConnectorException(e);
-        }
-    }
-
-    private void execute() throws IOException {
-        unixConnection.execute(cmdConfiguration.getTestCmdPath(), null);
+        exec(scriptPath, null);
     }
 }

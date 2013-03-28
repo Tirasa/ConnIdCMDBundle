@@ -84,22 +84,24 @@ public class CmdExecuteQuery extends CmdExec {
             for (int j = 0; j < attributesResult.length; j++) {
                 String attribute = attributesResult[j];
                 String[] dividedAttribute = attribute.split("=");
-                ConnectorObjectBuilder bld = new ConnectorObjectBuilder();
-                if (("__NAME__".equalsIgnoreCase(dividedAttribute[0]))
-                        && (StringUtil.isNotEmpty(dividedAttribute[1]))
-                        && (StringUtil.isNotBlank(dividedAttribute[1]))) {
-                    bld.setName(dividedAttribute[1]);
-                    bld.setUid(dividedAttribute[1]);
-                } else {
-                    bld.setUid("_W_R_O_N_G_");
-                    bld.setName("_W_R_O_N_G_");
+
+                if (dividedAttribute.length == 2) {
+                    ConnectorObjectBuilder bld = new ConnectorObjectBuilder();
+                    if (("__NAME__".equalsIgnoreCase(dividedAttribute[0]))
+                            && (StringUtil.isNotBlank(dividedAttribute[1]))) {
+                        bld.setName(dividedAttribute[1]);
+                        bld.setUid(dividedAttribute[1]);
+                    } else {
+                        bld.setUid("_W_R_O_N_G_");
+                        bld.setName("_W_R_O_N_G_");
+                    }
+                    bld.addAttribute(AttributeBuilder.build(dividedAttribute[0], CollectionUtil.newSet(
+                            dividedAttribute[1])));
+                    if (filter.isUid() && OperationalAttributes.ENABLE_NAME.equalsIgnoreCase(dividedAttribute[0])) {
+                        bld.addAttribute(OperationalAttributes.ENABLE_NAME, dividedAttribute[1]);
+                    }
+                    resultsHandler.handle(bld.build());
                 }
-                bld.addAttribute(AttributeBuilder.build(dividedAttribute[0], CollectionUtil.newSet(
-                        dividedAttribute[1])));
-                if (filter.isUid() && OperationalAttributes.ENABLE_NAME.equalsIgnoreCase(dividedAttribute[0])) {
-                    bld.addAttribute(OperationalAttributes.ENABLE_NAME, dividedAttribute[1]);
-                }
-                resultsHandler.handle(bld.build());
             }
         }
     }

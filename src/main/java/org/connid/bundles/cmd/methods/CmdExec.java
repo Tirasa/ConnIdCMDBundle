@@ -22,7 +22,6 @@
  */
 package org.connid.bundles.cmd.methods;
 
-import java.io.IOException;
 import org.connid.bundles.cmd.CmdConnection;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
@@ -33,15 +32,10 @@ public abstract class CmdExec {
 
     protected String exec(final String path, String[] env) {
         try {
-            return doExec(path, env);
+            return CmdConnection.openConnection().execute(path, env);
         } catch (Exception e) {
             LOG.error(e, "error executing script: " + path);
             throw new ConnectorException(e);
         }
-    }
-
-    private String doExec(final String path, final String[] env) throws IOException {
-        CmdConnection cmdConnection = CmdConnection.openConnection();
-        return cmdConnection.execute(path, env);
     }
 }

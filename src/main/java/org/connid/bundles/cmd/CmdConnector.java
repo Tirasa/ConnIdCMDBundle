@@ -87,15 +87,14 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     @Override
     public void test() {
         LOG.info("Remote connection test");
-        new CmdTest(cmdConfiguration).test();
+        new CmdTest(cmdConfiguration.getTestCmdPath()).test();
     }
 
     @Override
-    public void executeQuery(final ObjectClass oc, final Operand t, final ResultsHandler rh,
-            final OperationOptions oo) {
+    public void executeQuery(
+            final ObjectClass oc, final Operand t, final ResultsHandler rh, final OperationOptions oo) {
         try {
             new CmdExecuteQuery(cmdConfiguration.getSearchCmdPath(), t, rh).execQuery();
-
         } catch (ConnectException ex) {
             LOG.error("Error in connection process", ex);
         }
