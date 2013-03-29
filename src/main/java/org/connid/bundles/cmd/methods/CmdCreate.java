@@ -22,9 +22,6 @@
  */
 package org.connid.bundles.cmd.methods;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.framework.common.objects.Attribute;
@@ -52,23 +49,7 @@ public class CmdCreate extends CmdExec {
                     "No Name attribute provided in the attributes");
         }
 
-        exec(scriptPath, createEnv());
+        exec(scriptPath, createEnv(attrs));
         return new Uid(name.getNameValue());
-
-    }
-
-    private String[] createEnv() {
-        final List<String> res = new ArrayList<String>();
-        final Iterator attributes = attrs.iterator();
-
-        int index = 0;
-
-        while (attributes.hasNext()) {
-            Attribute attribute = (Attribute) attributes.next();
-            res.add(attribute.getName() + "=" + attribute.getValue().get(0));
-            index++;
-        }
-
-        return res.toArray(new String[res.size()]);
     }
 }

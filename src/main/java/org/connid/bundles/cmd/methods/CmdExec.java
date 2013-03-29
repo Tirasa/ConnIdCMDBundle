@@ -22,9 +22,16 @@
  */
 package org.connid.bundles.cmd.methods;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import org.connid.bundles.cmd.CmdConnection;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
+import org.identityconnectors.framework.common.objects.Attribute;
+import org.identityconnectors.framework.common.objects.AttributeUtil;
+import org.identityconnectors.framework.common.objects.Uid;
 
 public abstract class CmdExec {
 
@@ -37,5 +44,28 @@ public abstract class CmdExec {
             LOG.error(e, "error executing script: " + path);
             throw new ConnectorException(e);
         }
+    }
+
+    protected String[] createEnv(final Set<Attribute> attrs) {
+        return createEnv(attrs, null);
+    }
+
+    protected String[] createEnv(final Set<Attribute> attrs, final Uid uid) {
+        final List<String> res = new ArrayList<String>();
+        final Iterator attributes = attrs.iterator();
+
+        int index = 0;
+
+        while (attributes.hasNext()) {
+            Attribute attribute = (Attribute) attributes.next();
+            res.add(attribute.getName() + "=" + attribute.getValue().get(0));
+            index++;
+        }
+
+        if (uid != null && AttributeUtil.find(Uid.NAME, attrs) == null) {
+            res.add(Uid.NAME + "=" + uid.getUidValue());
+        }
+
+        return res.toArray(new String[res.size()]);
     }
 }

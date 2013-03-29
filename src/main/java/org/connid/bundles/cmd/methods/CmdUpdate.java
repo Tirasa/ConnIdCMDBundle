@@ -22,12 +22,8 @@
  */
 package org.connid.bundles.cmd.methods;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import org.identityconnectors.framework.common.objects.Attribute;
-import org.identityconnectors.framework.common.objects.AttributeUtil;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdUpdate extends CmdExec {
@@ -44,25 +40,8 @@ public class CmdUpdate extends CmdExec {
         this.attrs = attrs;
     }
 
-    public void execUpdateCmd() {
-        exec(scriptPath, createEnv());
-    }
-
-    private String[] createEnv() {
-        final List<String> res = new ArrayList<String>();
-        final Iterator attributes = attrs.iterator();
-
-        int index = 0;
-
-        while (attributes.hasNext()) {
-            Attribute attribute = (Attribute) attributes.next();
-            res.add(attribute.getName() + "=" + attribute.getValue().get(0));
-            index++;
-        }
-
-        if (AttributeUtil.find(Uid.NAME, attrs) == null) {
-            res.add(Uid.NAME + "=" + uid);
-        }
-        return res.toArray(new String[res.size()]);
+    public Uid execUpdateCmd() {
+        exec(scriptPath, createEnv(attrs, uid));
+        return uid;
     }
 }

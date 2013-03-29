@@ -23,14 +23,17 @@
 package org.connid.bundles.cmd.methods;
 
 import java.net.ConnectException;
+import java.util.Map;
+import java.util.Properties;
 import org.connid.bundles.cmd.search.Operand;
-import org.identityconnectors.common.CollectionUtil;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ConnectorObjectBuilder;
+import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.OperationalAttributes;
 import org.identityconnectors.framework.common.objects.ResultsHandler;
+import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdExecuteQuery extends CmdExec {
 
@@ -78,31 +81,26 @@ public class CmdExecuteQuery extends CmdExec {
         if (searchScriptOutput == null || searchScriptOutput.isEmpty()) {
             throw new ConnectException("No results found");
         }
-        String[] allResults = searchScriptOutput.split("\n");
-        for (int i = 0; i < allResults.length; i++) {
-            String[] attributesResult = allResults[i].split(";");
-            for (int j = 0; j < attributesResult.length; j++) {
-                String attribute = attributesResult[j];
-                String[] dividedAttribute = attribute.split("=");
 
-                if (dividedAttribute.length == 2) {
-                    ConnectorObjectBuilder bld = new ConnectorObjectBuilder();
-                    if (("__NAME__".equalsIgnoreCase(dividedAttribute[0]))
-                            && (StringUtil.isNotBlank(dividedAttribute[1]))) {
-                        bld.setName(dividedAttribute[1]);
-                        bld.setUid(dividedAttribute[1]);
-                    } else {
-                        bld.setUid("_W_R_O_N_G_");
-                        bld.setName("_W_R_O_N_G_");
-                    }
-                    bld.addAttribute(AttributeBuilder.build(dividedAttribute[0], CollectionUtil.newSet(
-                            dividedAttribute[1])));
-                    if (filter.isUid() && OperationalAttributes.ENABLE_NAME.equalsIgnoreCase(dividedAttribute[0])) {
-                        bld.addAttribute(OperationalAttributes.ENABLE_NAME, dividedAttribute[1]);
-                    }
-                    resultsHandler.handle(bld.build());
-                }
+        final Properties attrs = StringUtil.toProperties(searchScriptOutput);
+
+        final ConnectorObjectBuilder bld = new ConnectorObjectBuilder();
+
+        for (Map.Entry attr : attrs.entrySet()) {
+            final String name = attr.getKey().toString();
+            final String value = attr.getValue().toString();
+
+            if (Name.NAME.equalsIgnoreCase(name) && StringUtil.isNotBlank(value)) {
+                bld.setName(value);
+            } else if (Uid.NAME.equals(name)) {
+                bld.setUid(value);
+            } else if (OperationalAttributes.ENABLE_NAME.equals(name)) {
+                bld.addAttribute(AttributeBuilder.buildEnabled(Boolean.parseBoolean(value)));
+            } else {
+                bld.addAttribute(name, value);
             }
         }
+
+        resultsHandler.handle(bld.build());
     }
 }
