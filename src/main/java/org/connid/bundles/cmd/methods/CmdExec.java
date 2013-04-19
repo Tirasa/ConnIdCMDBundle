@@ -23,7 +23,6 @@
 package org.connid.bundles.cmd.methods;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.connid.bundles.cmd.CmdConnection;
@@ -31,17 +30,24 @@ import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeUtil;
+import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public abstract class CmdExec {
 
     private static final Log LOG = Log.getLog(CmdExec.class);
 
-    protected String exec(final String path, String[] env) {
+    protected final ObjectClass oc;
+
+    public CmdExec(final ObjectClass oc) {
+        this.oc = oc;
+    }
+
+    protected Process exec(final String path, String[] env) {
         try {
             return CmdConnection.openConnection().execute(path, env);
         } catch (Exception e) {
-            LOG.error(e, "error executing script: " + path);
+            LOG.error(e, "Error executing script: " + path);
             throw new ConnectorException(e);
         }
     }
@@ -52,14 +58,15 @@ public abstract class CmdExec {
 
     protected String[] createEnv(final Set<Attribute> attrs, final Uid uid) {
         final List<String> res = new ArrayList<String>();
-        final Iterator attributes = attrs.iterator();
 
-        int index = 0;
+        if (oc != null) {
+            res.add("OBJECT_CLASS=" + oc.getObjectClassValue());
+        }
 
-        while (attributes.hasNext()) {
-            Attribute attribute = (Attribute) attributes.next();
-            res.add(attribute.getName() + "=" + attribute.getValue().get(0));
-            index++;
+        for (Attribute attr : attrs) {
+            if (attr.getValue() != null && !attr.getValue().isEmpty()) {
+                res.add(attr.getName() + "=" + attr.getValue().get(0));
+            }
         }
 
         if (uid != null && AttributeUtil.find(Uid.NAME, attrs) == null) {

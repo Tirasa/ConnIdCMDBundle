@@ -22,9 +22,7 @@
  */
 package org.connid.bundles.cmd;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
 import org.identityconnectors.common.StringUtil;
@@ -46,7 +44,7 @@ public class CmdConnection {
     private CmdConnection() {
     }
 
-    public String execute(final String cmd, final String[] envp) throws IOException {
+    public Process execute(final String cmd, final String[] envp) throws IOException {
         LOG.info("Execute script {0} {1}", cmd, Arrays.asList(envp == null ? new String[0] : envp));
 
         final ProcessBuilder builder = new ProcessBuilder(cmd.split(" "));
@@ -60,20 +58,6 @@ public class CmdConnection {
 
         final Process proc = builder.start();
         proc.getOutputStream().close();
-        return readOutput(proc);
-    }
-
-    private String readOutput(final Process proc) throws IOException {
-        final BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        final StringBuilder buffer = new StringBuilder();
-
-        String line;
-        while ((line = br.readLine()) != null) {
-            buffer.append(line).append("\n");
-        }
-
-        LOG.info("Script result: {0}", buffer.toString());
-
-        return buffer.toString();
+        return proc;
     }
 }

@@ -31,6 +31,8 @@ public class CmdTest extends CmdExec {
     private String scriptPath;
 
     public CmdTest(final String scriptPath) {
+        super(null);
+
         this.scriptPath = scriptPath;
     }
 

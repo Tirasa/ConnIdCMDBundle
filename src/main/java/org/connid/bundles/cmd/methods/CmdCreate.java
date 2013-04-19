@@ -27,6 +27,7 @@ import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeUtil;
 import org.identityconnectors.framework.common.objects.Name;
+import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdCreate extends CmdExec {
@@ -35,7 +36,9 @@ public class CmdCreate extends CmdExec {
 
     private Set<Attribute> attrs;
 
-    public CmdCreate(final String path, final Set<Attribute> attrs) {
+    public CmdCreate(final ObjectClass oc, final String path, final Set<Attribute> attrs) {
+        super(oc);
+
         this.attrs = attrs;
         scriptPath = path;
     }

@@ -24,6 +24,7 @@ package org.connid.bundles.cmd.methods;
 
 import java.util.Set;
 import org.identityconnectors.framework.common.objects.Attribute;
+import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdUpdate extends CmdExec {
@@ -34,7 +35,9 @@ public class CmdUpdate extends CmdExec {
 
     private Set<Attribute> attrs;
 
-    public CmdUpdate(final String path, final Uid uid, final Set<Attribute> attrs) {
+    public CmdUpdate(final ObjectClass oc, final String path, final Uid uid, final Set<Attribute> attrs) {
+        super(oc);
+        
         scriptPath = path;
         this.uid = uid;
         this.attrs = attrs;

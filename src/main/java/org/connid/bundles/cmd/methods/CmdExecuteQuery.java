@@ -22,20 +22,32 @@
  */
 package org.connid.bundles.cmd.methods;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ConnectException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.connid.bundles.cmd.search.Operand;
 import org.identityconnectors.common.StringUtil;
+import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
+import org.identityconnectors.framework.common.objects.ConnectorObject;
 import org.identityconnectors.framework.common.objects.ConnectorObjectBuilder;
 import org.identityconnectors.framework.common.objects.Name;
+import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationalAttributes;
 import org.identityconnectors.framework.common.objects.ResultsHandler;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdExecuteQuery extends CmdExec {
+
+    private static final Log LOG = Log.getLog(CmdExecuteQuery.class);
+
+    private static String ITEM_SEPARATOR = "--- NEW SEARCH RESULT ITEM ---";
 
     private String scriptPath;
 
@@ -43,38 +55,47 @@ public class CmdExecuteQuery extends CmdExec {
 
     private ResultsHandler resultsHandler;
 
-    public CmdExecuteQuery(final String scriptPath, final Operand filter, final ResultsHandler rh) {
+    public CmdExecuteQuery(final ObjectClass oc, final String scriptPath, final Operand filter, final ResultsHandler rh) {
+        super(oc);
+
         this.scriptPath = scriptPath;
         this.filter = filter;
         this.resultsHandler = rh;
     }
 
     public void execQuery() throws ConnectException {
-        switch (filter.getOperator()) {
-            case EQ:
-                String result = exec(scriptPath, createEnv());
-                fillUserHandler(result);
-                break;
-            case SW:
-                break;
-            case EW:
-                break;
-            case C:
-                break;
-            case OR:
-                break;
-            case AND:
-                break;
-            default:
-                throw new ConnectorException("Wrong Operator");
+        if (filter == null) {
+            LOG.info("Full search (no filter) ...");
+            readOutput(exec(scriptPath, null));
+        } else {
+            LOG.info("Search with filter {0} ...", filter);
+            switch (filter.getOperator()) {
+                case EQ:
+                    readOutput(exec(scriptPath, createEnv()));
+                    break;
+                case SW:
+                    break;
+                case EW:
+                    break;
+                case C:
+                    break;
+                case OR:
+                    break;
+                case AND:
+                    break;
+                default:
+                    throw new ConnectorException("Wrong Operator");
+            }
         }
-
     }
 
     private String[] createEnv() {
-        String[] arrayAttributes = new String[1];
-        arrayAttributes[0] = filter.getAttributeName() + "=" + filter.getAttributeValue();
-        return arrayAttributes;
+        final List<String> attributes = new ArrayList<String>();
+
+        attributes.add(filter.getAttributeName() + "=" + filter.getAttributeValue());
+        attributes.add("OBJECT_CLASS=" + oc.getObjectClassValue());
+
+        return attributes.toArray(new String[attributes.size()]);
     }
 
     private void fillUserHandler(final String searchScriptOutput) throws ConnectException {
@@ -101,6 +122,47 @@ public class CmdExecuteQuery extends CmdExec {
             }
         }
 
-        resultsHandler.handle(bld.build());
+        bld.setObjectClass(oc);
+
+        final ConnectorObject connObject = bld.build();
+
+        resultsHandler.handle(connObject);
+    }
+
+    private void readOutput(final Process proc) {
+        LOG.info("Read for script output ...");
+
+        final BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+        final StringBuilder buffer = new StringBuilder();
+
+        String line;
+
+        try {
+            while ((line = br.readLine()) != null) {
+                if (line.contains(ITEM_SEPARATOR)) {
+                    if (buffer.length() > 0) {
+                        LOG.info("Handle result item {0}", buffer.toString());
+                        fillUserHandler(buffer.toString());
+                        buffer.delete(0, buffer.length());
+                    }
+                } else {
+                    buffer.append(line).append("\n");
+                }
+            }
+
+            if (buffer.length() > 0) {
+                LOG.info("Handle result item {0}", buffer.toString());
+                fillUserHandler(buffer.toString());
+            }
+
+        } catch (IOException e) {
+            LOG.error(e, "Error reading result items");
+        }
+
+        try {
+            br.close();
+        } catch (IOException e) {
+            LOG.ok(e, "Error closing reader");
+        }
     }
 }

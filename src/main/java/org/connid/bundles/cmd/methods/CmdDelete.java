@@ -22,6 +22,7 @@
  */
 package org.connid.bundles.cmd.methods;
 
+import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdDelete extends CmdExec {
@@ -30,7 +31,9 @@ public class CmdDelete extends CmdExec {
 
     private Uid uid;
 
-    public CmdDelete(final String path, final Uid uid) {
+    public CmdDelete(final ObjectClass oc, final String path, final Uid uid) {
+        super(oc);
+
         this.uid = uid;
         scriptPath = path;
     }
@@ -40,6 +43,6 @@ public class CmdDelete extends CmdExec {
     }
 
     private String[] createEnv() {
-        return new String[]{uid.getName() + "=" + uid.getUidValue()};
+        return new String[]{"OBJECT_CLASS=" + oc.getObjectClassValue(), uid.getName() + "=" + uid.getUidValue()};
     }
 }

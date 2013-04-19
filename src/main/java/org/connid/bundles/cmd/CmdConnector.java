@@ -70,17 +70,17 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
 
     @Override
     public Uid create(final ObjectClass oc, final Set<Attribute> set, final OperationOptions oo) {
-        return new CmdCreate(cmdConfiguration.getCreateCmdPath(), set).execCreateCmd();
+        return new CmdCreate(oc, cmdConfiguration.getCreateCmdPath(), set).execCreateCmd();
     }
 
     @Override
     public Uid update(final ObjectClass oc, Uid uid, final Set<Attribute> set, final OperationOptions oo) {
-        return new CmdUpdate(cmdConfiguration.getUpdateCmdPath(), uid, set).execUpdateCmd();
+        return new CmdUpdate(oc, cmdConfiguration.getUpdateCmdPath(), uid, set).execUpdateCmd();
     }
 
     @Override
     public void delete(final ObjectClass oc, final Uid uid, final OperationOptions oo) {
-        new CmdDelete(cmdConfiguration.getDeleteCmdPath(), uid).execDeleteCmd();
+        new CmdDelete(oc, cmdConfiguration.getDeleteCmdPath(), uid).execDeleteCmd();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     public void executeQuery(
             final ObjectClass oc, final Operand t, final ResultsHandler rh, final OperationOptions oo) {
         try {
-            new CmdExecuteQuery(cmdConfiguration.getSearchCmdPath(), t, rh).execQuery();
+            new CmdExecuteQuery(oc, cmdConfiguration.getSearchCmdPath(), t, rh).execQuery();
         } catch (ConnectException ex) {
             LOG.error("Error in connection process", ex);
         }
