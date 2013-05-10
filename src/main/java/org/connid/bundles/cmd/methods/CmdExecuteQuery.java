@@ -64,14 +64,18 @@ public class CmdExecuteQuery extends CmdExec {
     }
 
     public void execQuery() throws ConnectException {
+        final Process proc;
+
         if (filter == null) {
             LOG.info("Full search (no filter) ...");
-            readOutput(exec(scriptPath, null));
+            proc = exec(scriptPath, null);
+            readOutput(proc);
         } else {
             LOG.info("Search with filter {0} ...", filter);
+            proc = exec(scriptPath, createEnv());
             switch (filter.getOperator()) {
                 case EQ:
-                    readOutput(exec(scriptPath, createEnv()));
+                    readOutput(proc);
                     break;
                 case SW:
                     break;
@@ -87,6 +91,8 @@ public class CmdExecuteQuery extends CmdExec {
                     throw new ConnectorException("Wrong Operator");
             }
         }
+
+        waitFor(proc);
     }
 
     private String[] createEnv() {

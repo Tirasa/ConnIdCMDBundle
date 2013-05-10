@@ -37,6 +37,6 @@ public class CmdTest extends CmdExec {
     }
 
     public final void test() {
-        exec(scriptPath, null);
+        waitFor(exec(scriptPath, null));
     }
 }

@@ -24,6 +24,7 @@ package org.connid.bundles.cmd.methods;
 
 import java.util.Set;
 import org.identityconnectors.common.StringUtil;
+import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeUtil;
 import org.identityconnectors.framework.common.objects.Name;
@@ -32,6 +33,8 @@ import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdCreate extends CmdExec {
 
+    private static final Log LOG = Log.getLog(CmdCreate.class);
+    
     private String scriptPath = null;
 
     private Set<Attribute> attrs;
@@ -52,7 +55,8 @@ public class CmdCreate extends CmdExec {
                     "No Name attribute provided in the attributes");
         }
 
-        exec(scriptPath, createEnv(attrs));
+        waitFor(exec(scriptPath, createEnv(attrs)));
+        
         return new Uid(name.getNameValue());
     }
 }

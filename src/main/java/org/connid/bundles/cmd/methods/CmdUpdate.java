@@ -23,11 +23,14 @@
 package org.connid.bundles.cmd.methods;
 
 import java.util.Set;
+import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdUpdate extends CmdExec {
+
+    private static final Log LOG = Log.getLog(CmdDelete.class);
 
     private String scriptPath = null;
 
@@ -37,14 +40,14 @@ public class CmdUpdate extends CmdExec {
 
     public CmdUpdate(final ObjectClass oc, final String path, final Uid uid, final Set<Attribute> attrs) {
         super(oc);
-        
+
         scriptPath = path;
         this.uid = uid;
         this.attrs = attrs;
     }
 
     public Uid execUpdateCmd() {
-        exec(scriptPath, createEnv(attrs, uid));
+        waitFor(exec(scriptPath, createEnv(attrs, uid)));
         return uid;
     }
 }

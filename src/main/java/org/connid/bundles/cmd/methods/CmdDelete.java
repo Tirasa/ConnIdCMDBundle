@@ -22,10 +22,13 @@
  */
 package org.connid.bundles.cmd.methods;
 
+import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdDelete extends CmdExec {
+
+    private static final Log LOG = Log.getLog(CmdDelete.class);
 
     private String scriptPath = null;
 
@@ -39,10 +42,10 @@ public class CmdDelete extends CmdExec {
     }
 
     public void execDeleteCmd() {
-        exec(scriptPath, createEnv());
+        waitFor(exec(scriptPath, createEnv()));
     }
 
     private String[] createEnv() {
-        return new String[]{"OBJECT_CLASS=" + oc.getObjectClassValue(), uid.getName() + "=" + uid.getUidValue()};
+        return new String[] {"OBJECT_CLASS=" + oc.getObjectClassValue(), uid.getName() + "=" + uid.getUidValue()};
     }
 }

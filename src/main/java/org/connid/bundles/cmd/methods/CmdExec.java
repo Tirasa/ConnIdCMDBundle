@@ -75,4 +75,13 @@ public abstract class CmdExec {
 
         return res.toArray(new String[res.size()]);
     }
+
+    protected void waitFor(final Process proc) {
+        try {
+            proc.waitFor();
+            LOG.info("Process ended");
+        } catch (InterruptedException e) {
+            LOG.error(e, "Error waiting for termination");
+        }
+    }
 }
