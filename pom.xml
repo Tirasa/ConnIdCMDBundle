@@ -54,7 +54,7 @@
   <scm>
     <connection>scm:git:git@github.com:Tirasa/ConnIdCMDBundle.git</connection>
     <url>scm:git:git@github.com:Tirasa/ConnIdCMDBundle.git</url>
-    <developerConnection>scm:git:git@github.com:Tirasa/ConnIdCMDBundlee.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:Tirasa/ConnIdCMDBundle.git</developerConnection>
   </scm>
 
   <issueManagement>
