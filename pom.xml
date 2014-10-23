@@ -35,7 +35,7 @@
     
   <groupId>net.tirasa.connid.bundles</groupId>
   <artifactId>net.tirasa.connid.bundles.cmd</artifactId>
-  <version>0.2-SNAPSHOT</version>    
+  <version>0.2</version>    
     
   <name>ConnId Bundles: CMD</name>
 
