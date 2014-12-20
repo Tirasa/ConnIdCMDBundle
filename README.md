@@ -1,4 +1,4 @@
-ConnIdADBundle
+ConnIdCMDBundle
 ==============
 
 The CMD bundle is part of the [ConnId](http://connid.tirasa.net) project.
