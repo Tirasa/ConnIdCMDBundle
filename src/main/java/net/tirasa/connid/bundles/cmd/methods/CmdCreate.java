@@ -27,10 +27,10 @@ import org.identityconnectors.framework.common.objects.Uid;
 public class CmdCreate extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdCreate.class);
-    
-    private String scriptPath = null;
 
-    private Set<Attribute> attrs;
+    private final String scriptPath;
+
+    private final Set<Attribute> attrs;
 
     public CmdCreate(final ObjectClass oc, final String path, final Set<Attribute> attrs) {
         super(oc);
@@ -47,9 +47,10 @@ public class CmdCreate extends CmdExec {
             throw new IllegalArgumentException(
                     "No Name attribute provided in the attributes");
         }
+        LOG.info("Executing creation for {0}", name.getNameValue());
 
         waitFor(exec(scriptPath, createEnv(attrs)));
-        
+
         return new Uid(name.getNameValue());
     }
 }

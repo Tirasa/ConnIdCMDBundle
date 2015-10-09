@@ -21,7 +21,7 @@ public class CmdTest extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdTest.class);
 
-    private String scriptPath;
+    private final String scriptPath;
 
     public CmdTest(final String scriptPath) {
         super(null);
@@ -30,6 +30,8 @@ public class CmdTest extends CmdExec {
     }
 
     public final void test() {
+        LOG.info("Executing test on {0}", scriptPath);
+        
         waitFor(exec(scriptPath, null));
     }
 }

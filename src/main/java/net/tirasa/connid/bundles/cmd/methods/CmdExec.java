@@ -36,7 +36,7 @@ public abstract class CmdExec {
         this.oc = oc;
     }
 
-    protected Process exec(final String path, String[] env) {
+    protected Process exec(final String path, final String[] env) {
         try {
             return CmdConnection.openConnection().execute(path, env);
         } catch (Exception e) {
@@ -52,18 +52,28 @@ public abstract class CmdExec {
     protected String[] createEnv(final Set<Attribute> attrs, final Uid uid) {
         final List<String> res = new ArrayList<String>();
 
+        LOG.info("Creating environment with:");
         if (oc != null) {
+            LOG.info("   > {0}", "OBJECT_CLASS=" + oc.getObjectClassValue());
             res.add("OBJECT_CLASS=" + oc.getObjectClassValue());
         }
 
-        for (Attribute attr : attrs) {
+        for (final Attribute attr : attrs) {
             if (attr.getValue() != null && !attr.getValue().isEmpty()) {
+                LOG.info("   > Attr: {0}", attr.getName() + "=" + attr.getValue().get(0));
                 res.add(attr.getName() + "=" + attr.getValue().get(0));
             }
         }
 
         if (uid != null && AttributeUtil.find(Uid.NAME, attrs) == null) {
+            LOG.info("   > Uid: {0}", Uid.NAME + "=" + uid.getUidValue());
             res.add(Uid.NAME + "=" + uid.getUidValue());
+        }
+        
+        
+        if (uid != null) {
+            LOG.info("   > Uid: {0}", "__OLDUID__" + "=" + uid.getUidValue());
+            res.add("__OLDUID__" + "=" + uid.getUidValue());
         }
 
         return res.toArray(new String[res.size()]);

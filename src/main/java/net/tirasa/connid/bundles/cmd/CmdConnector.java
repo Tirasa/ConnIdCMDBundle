@@ -16,6 +16,8 @@
 package net.tirasa.connid.bundles.cmd;
 
 import java.net.ConnectException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import net.tirasa.connid.bundles.cmd.methods.CmdCreate;
 import net.tirasa.connid.bundles.cmd.methods.CmdDelete;
@@ -62,17 +64,56 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     }
 
     @Override
-    public Uid create(final ObjectClass oc, final Set<Attribute> set, final OperationOptions oo) {
-        return new CmdCreate(oc, cmdConfiguration.getCreateCmdPath(), set).execCreateCmd();
+    public Uid create(final ObjectClass oc, final Set<Attribute> attributes, final OperationOptions oo) {
+        LOG.info("Create parameters:");
+        LOG.info("   > ObjectClass {0}", oc.getObjectClassValue());
+
+        final Iterator<Attribute> i = attributes.iterator();
+        Attribute attr;
+        while (i.hasNext()) {
+            attr = i.next();
+            LOG.info("   > Attribute {0}", attr.getName() + ": " + attr.getValue());
+        }
+        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+            final String key = entrySet.getKey();
+            final Object value = entrySet.getValue();
+            LOG.info("   > OperationOptions {0}", key + ": " + value);
+        }
+
+        return new CmdCreate(oc, cmdConfiguration.getCreateCmdPath(), attributes).execCreateCmd();
     }
 
     @Override
-    public Uid update(final ObjectClass oc, Uid uid, final Set<Attribute> set, final OperationOptions oo) {
-        return new CmdUpdate(oc, cmdConfiguration.getUpdateCmdPath(), uid, set).execUpdateCmd();
+    public Uid update(final ObjectClass oc, final Uid uid, final Set<Attribute> attributes, final OperationOptions oo) {
+        LOG.info("Update parameters:");
+        LOG.info("   > ObjectClass {0}", oc.getObjectClassValue());
+        LOG.info("   > Uid {0}", uid.getUidValue());
+        final Iterator<Attribute> i = attributes.iterator();
+        Attribute attr;
+        while (i.hasNext()) {
+            attr = i.next();
+            LOG.info("   > Attribute {0}", attr.getName() + ": " + attr.getValue());
+        }
+        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+            final String key = entrySet.getKey();
+            final Object value = entrySet.getValue();
+            LOG.info("   > OperationOptions {0}", key + ": " + value);
+        }
+
+        return new CmdUpdate(oc, cmdConfiguration.getUpdateCmdPath(), uid, attributes).execUpdateCmd();
     }
 
     @Override
     public void delete(final ObjectClass oc, final Uid uid, final OperationOptions oo) {
+        LOG.info("Delete parameters:");
+        LOG.info("   > ObjectClass {0}", oc.getObjectClassValue());
+        LOG.info("   > Uid {0}", uid.getUidValue());
+        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+            final String key = entrySet.getKey();
+            final Object value = entrySet.getValue();
+            LOG.info("   > OperationOptions {0}", key + ": " + value);
+        }
+
         new CmdDelete(oc, cmdConfiguration.getDeleteCmdPath(), uid).execDeleteCmd();
     }
 
@@ -85,6 +126,15 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     @Override
     public void executeQuery(
             final ObjectClass oc, final Operand t, final ResultsHandler rh, final OperationOptions oo) {
+        LOG.info("Search parameters:");
+        LOG.info("   > ObjectClass {0}", oc.getObjectClassValue());
+        LOG.info("   > Operand is uid: {0}", t.isUid());
+        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+            final String key = entrySet.getKey();
+            final Object value = entrySet.getValue();
+            LOG.info("   > OperationOptions {0}", key + ": " + value);
+        }
+
         try {
             new CmdExecuteQuery(oc, cmdConfiguration.getSearchCmdPath(), t, rh).execQuery();
         } catch (ConnectException ex) {

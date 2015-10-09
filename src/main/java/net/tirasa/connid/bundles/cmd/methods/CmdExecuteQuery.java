@@ -28,7 +28,6 @@ import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
-import org.identityconnectors.framework.common.objects.ConnectorObject;
 import org.identityconnectors.framework.common.objects.ConnectorObjectBuilder;
 import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.ObjectClass;
@@ -40,13 +39,13 @@ public class CmdExecuteQuery extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdExecuteQuery.class);
 
-    private static String ITEM_SEPARATOR = "--- NEW SEARCH RESULT ITEM ---";
+    private static final String ITEM_SEPARATOR = "--- NEW SEARCH RESULT ITEM ---";
 
-    private String scriptPath;
+    private final String scriptPath;
 
-    private Operand filter;
+    private final Operand filter;
 
-    private ResultsHandler resultsHandler;
+    private final ResultsHandler resultsHandler;
 
     public CmdExecuteQuery(final ObjectClass oc, final String scriptPath, final Operand filter, final ResultsHandler rh) {
         super(oc);
@@ -91,6 +90,10 @@ public class CmdExecuteQuery extends CmdExec {
     private String[] createEnv() {
         final List<String> attributes = new ArrayList<String>();
 
+        LOG.info("Creating environment for deletion with:");
+        LOG.info("   >  {0}" , oc.getObjectClassValue());
+        LOG.info("   >  {0}" , filter.getAttributeName() + "=" + filter.getAttributeValue());
+        
         attributes.add(filter.getAttributeName() + "=" + filter.getAttributeValue());
         attributes.add("OBJECT_CLASS=" + oc.getObjectClassValue());
 
@@ -123,9 +126,7 @@ public class CmdExecuteQuery extends CmdExec {
 
         bld.setObjectClass(oc);
 
-        final ConnectorObject connObject = bld.build();
-
-        resultsHandler.handle(connObject);
+        resultsHandler.handle(bld.build());
     }
 
     private void readOutput(final Process proc) {

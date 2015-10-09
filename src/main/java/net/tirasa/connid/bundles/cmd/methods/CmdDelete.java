@@ -25,7 +25,7 @@ public class CmdDelete extends CmdExec {
 
     private String scriptPath = null;
 
-    private Uid uid;
+    private final Uid uid;
 
     public CmdDelete(final ObjectClass oc, final String path, final Uid uid) {
         super(oc);
@@ -35,10 +35,16 @@ public class CmdDelete extends CmdExec {
     }
 
     public void execDeleteCmd() {
+        LOG.info("Executing deletion for {0}", uid);
+        
         waitFor(exec(scriptPath, createEnv()));
     }
 
     private String[] createEnv() {
+        LOG.info("Creating environment for deletion with:");
+        LOG.info("   >  {0}" , oc.getObjectClassValue());
+        LOG.info("   >  {0}" , uid.getName() + "=" + uid.getUidValue());
+        
         return new String[] {"OBJECT_CLASS=" + oc.getObjectClassValue(), uid.getName() + "=" + uid.getUidValue()};
     }
 }

@@ -39,11 +39,12 @@ public class CmdUpdateTest extends SharedTestMethods {
         connector.init(createConfiguration());
         name = new Name(attrs.getUsername());
     }
-    
+
     @Test
     public final void testConnection() {
         connector.init(createConfiguration());
-        connector.update(ObjectClass.ACCOUNT, new Uid("massi"), createSetOfAttributes(name, attrs.getPassword(), true), null);
+        connector.update(ObjectClass.ACCOUNT, new Uid("massi"),
+                createSetOfAttributes(name, attrs.getPassword(), true), null);
         connector.dispose();
     }
 }

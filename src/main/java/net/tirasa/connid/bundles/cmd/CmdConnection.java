@@ -23,7 +23,7 @@ import org.identityconnectors.common.logging.Log;
 
 public class CmdConnection {
 
-    private static final Log LOG = Log.getLog(CmdConnector.class);
+    private static final Log LOG = Log.getLog(CmdConnection.class);
 
     private static CmdConnection cmdConnection = null;
 
@@ -37,13 +37,13 @@ public class CmdConnection {
     private CmdConnection() {
     }
 
-    public Process execute(final String cmd, final String[] envp) throws IOException {
-        LOG.info("Execute script {0} {1}", cmd, Arrays.asList(envp == null ? new String[0] : envp));
+    public Process execute(final String path, final String[] envp) throws IOException {
+        LOG.info("Execute script {0} {1}", path, Arrays.asList(envp == null ? new String[0] : envp));
 
-        final ProcessBuilder builder = new ProcessBuilder(cmd.split(" "));
+        final ProcessBuilder builder = new ProcessBuilder(path.split(" "));
 
         if (envp != null) {
-            for (String env : envp) {
+            for (final String env : envp) {
                 final Map.Entry<Object, Object> entry = StringUtil.toProperties(env).entrySet().iterator().next();
                 builder.environment().put(entry.getKey().toString(), entry.getValue().toString());
             }

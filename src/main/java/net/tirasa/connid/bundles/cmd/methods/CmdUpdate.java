@@ -23,13 +23,13 @@ import org.identityconnectors.framework.common.objects.Uid;
 
 public class CmdUpdate extends CmdExec {
 
-    private static final Log LOG = Log.getLog(CmdDelete.class);
+    private static final Log LOG = Log.getLog(CmdUpdate.class);
 
     private String scriptPath = null;
 
-    private Uid uid;
+    private final Uid uid;
 
-    private Set<Attribute> attrs;
+    private final Set<Attribute> attrs;
 
     public CmdUpdate(final ObjectClass oc, final String path, final Uid uid, final Set<Attribute> attrs) {
         super(oc);
@@ -40,6 +40,8 @@ public class CmdUpdate extends CmdExec {
     }
 
     public Uid execUpdateCmd() {
+        LOG.info("Executing the update for {0}", uid);
+       
         waitFor(exec(scriptPath, createEnv(attrs, uid)));
         return uid;
     }
