@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.Set;
 import net.tirasa.connid.bundles.cmd.CmdConnection;
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeUtil;
 import org.identityconnectors.framework.common.objects.ObjectClass;
+import org.identityconnectors.framework.common.objects.OperationalAttributes;
 import org.identityconnectors.framework.common.objects.Uid;
 
 public abstract class CmdExec {
@@ -60,8 +62,22 @@ public abstract class CmdExec {
 
         for (final Attribute attr : attrs) {
             if (attr.getValue() != null && !attr.getValue().isEmpty()) {
-                LOG.info("   > Attr: {0}", attr.getName() + "=" + attr.getValue().get(0));
-                res.add(attr.getName() + "=" + attr.getValue().get(0));
+                
+                LOG.ok("Environment variable {0}: {1}", attr.getName(), attr.getValue().get(0));
+                if (OperationalAttributes.PASSWORD_NAME.equals(attr.getName())) {
+                    final GuardedString gpasswd = AttributeUtil.getPasswordValue(attrs);
+                    if (gpasswd != null) {
+                        gpasswd.access(new GuardedString.Accessor() {
+
+                            @Override
+                            public void access(char[] clearChars) {
+                                res.add(OperationalAttributes.PASSWORD_NAME + "=" + new String(clearChars));
+                            }
+                        });
+                    }
+                } else {
+                    res.add(attr.getName() + "=" + attr.getValue().get(0));
+                }
             }
         }
 
