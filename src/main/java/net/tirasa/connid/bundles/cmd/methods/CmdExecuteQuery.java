@@ -26,6 +26,7 @@ import java.util.Properties;
 import net.tirasa.connid.bundles.cmd.search.Operand;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ConnectorObjectBuilder;
@@ -59,11 +60,11 @@ public class CmdExecuteQuery extends CmdExec {
         final Process proc;
 
         if (filter == null) {
-            LOG.info("Full search (no filter) ...");
+            LOG.ok("Full search (no filter) ...");
             proc = exec(scriptPath, null);
             readOutput(proc);
         } else {
-            LOG.info("Search with filter {0} ...", filter);
+            LOG.ok("Search with filter {0} ...", filter);
             proc = exec(scriptPath, createEnv());
             switch (filter.getOperator()) {
                 case EQ:
@@ -90,10 +91,10 @@ public class CmdExecuteQuery extends CmdExec {
     private String[] createEnv() {
         final List<String> attributes = new ArrayList<String>();
 
-        LOG.info("Creating environment for deletion with:");
-        LOG.info("   >  {0}" , oc.getObjectClassValue());
-        LOG.info("   >  {0}" , filter.getAttributeName() + "=" + filter.getAttributeValue());
-        
+        LOG.ok("Creating environment for search with:");
+        LOG.ok("OBJECT_CLASS: {0}", oc.getObjectClassValue());
+        LOG.ok("Query filter {0}= {1}", filter.getAttributeName(), filter.getAttributeValue());
+
         attributes.add(filter.getAttributeName() + "=" + filter.getAttributeValue());
         attributes.add("OBJECT_CLASS=" + oc.getObjectClassValue());
 
@@ -141,7 +142,7 @@ public class CmdExecuteQuery extends CmdExec {
             while ((line = br.readLine()) != null) {
                 if (line.contains(ITEM_SEPARATOR)) {
                     if (buffer.length() > 0) {
-                        LOG.info("Handle result item {0}", buffer.toString());
+                        LOG.ok("Handle result item {0}", buffer.toString());
                         fillUserHandler(buffer.toString());
                         buffer.delete(0, buffer.length());
                     }
@@ -151,7 +152,7 @@ public class CmdExecuteQuery extends CmdExec {
             }
 
             if (buffer.length() > 0) {
-                LOG.info("Handle result item {0}", buffer.toString());
+                LOG.ok("Handle result item {0}", buffer.toString());
                 fillUserHandler(buffer.toString());
             }
 

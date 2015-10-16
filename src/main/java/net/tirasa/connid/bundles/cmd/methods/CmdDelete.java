@@ -41,9 +41,9 @@ public class CmdDelete extends CmdExec {
     }
 
     private String[] createEnv() {
-        LOG.info("Creating environment for deletion with:");
-        LOG.info("   >  {0}" , oc.getObjectClassValue());
-        LOG.info("   >  {0}" , uid.getName() + "=" + uid.getUidValue());
+        LOG.ok("Creating environment for deletion with:");
+        LOG.ok("ObjectClass: {0}" , oc.getObjectClassValue());
+        LOG.ok("Environment variable {0}: {1}" , uid.getName(), uid.getUidValue());
         
         return new String[] {"OBJECT_CLASS=" + oc.getObjectClassValue(), uid.getName() + "=" + uid.getUidValue()};
     }

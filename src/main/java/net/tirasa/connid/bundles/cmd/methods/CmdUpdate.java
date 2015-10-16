@@ -41,7 +41,7 @@ public class CmdUpdate extends CmdExec {
 
     public Uid execUpdateCmd() {
         LOG.info("Executing the update for {0}", uid);
-       
+
         waitFor(exec(scriptPath, createEnv(attrs, uid)));
         return uid;
     }

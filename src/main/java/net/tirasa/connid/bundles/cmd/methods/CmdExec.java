@@ -52,9 +52,9 @@ public abstract class CmdExec {
     protected String[] createEnv(final Set<Attribute> attrs, final Uid uid) {
         final List<String> res = new ArrayList<String>();
 
-        LOG.info("Creating environment with:");
+        LOG.ok("Creating environment with:");
         if (oc != null) {
-            LOG.info("   > {0}", "OBJECT_CLASS=" + oc.getObjectClassValue());
+            LOG.ok("OBJECT_CLASS: {0}", oc.getObjectClassValue());
             res.add("OBJECT_CLASS=" + oc.getObjectClassValue());
         }
 
@@ -66,14 +66,8 @@ public abstract class CmdExec {
         }
 
         if (uid != null && AttributeUtil.find(Uid.NAME, attrs) == null) {
-            LOG.info("   > Uid: {0}", Uid.NAME + "=" + uid.getUidValue());
+            LOG.ok("Environment variable {0}: {1}", Uid.NAME, uid.getUidValue());
             res.add(Uid.NAME + "=" + uid.getUidValue());
-        }
-        
-        
-        if (uid != null) {
-            LOG.info("   > Uid: {0}", "__OLDUID__" + "=" + uid.getUidValue());
-            res.add("__OLDUID__" + "=" + uid.getUidValue());
         }
 
         return res.toArray(new String[res.size()]);
