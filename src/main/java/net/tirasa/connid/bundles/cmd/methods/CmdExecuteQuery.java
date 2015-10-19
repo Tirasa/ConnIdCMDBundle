@@ -121,7 +121,7 @@ public class CmdExecuteQuery extends CmdExec {
             } else if (OperationalAttributes.ENABLE_NAME.equals(name)) {
                 bld.addAttribute(AttributeBuilder.buildEnabled(Boolean.parseBoolean(value)));
             } else if (OperationalAttributes.PASSWORD_NAME.equals(name)) {
-                bld.addAttribute(AttributeBuilder.build(name, new GuardedString(value.toCharArray())));
+                bld.addAttribute(AttributeBuilder.buildPassword(new GuardedString(value.toCharArray())));
             } else {
                 bld.addAttribute(name, value);
             }
