@@ -3,6 +3,11 @@ ConnIdCMDBundle
 
 The CMD bundle is part of the [ConnId](http://connid.tirasa.net) project.
 
+<a href="https://travis-ci.org/Tirasa/ConnIdCMDBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdCMDBundle.png"/></a>
+<a href="https://maven-badges.herokuapp.com/maven-central/net.tirasa.connid.bundles/net.tirasa.connid.bundles.cmd">
+  <img src="https://maven-badges.herokuapp.com/maven-central/net.tirasa.connid.bundles/net.tirasa.connid.bundles.cmd/badge.svg"/>
+</a>
+
 ## How to get it
 
 ### Maven
@@ -25,4 +30,3 @@ Available from [releases](https://github.com/Tirasa/ConnIdCMDBundle/releases).
 
  * [wiki](https://connid.atlassian.net/browse/CMD)
  * [issues](https://connid.atlassian.net/browse/CMD)
- * <a href="https://travis-ci.org/Tirasa/ConnIdCMDBundle"><img src="https://api.travis-ci.org/Tirasa/ConnIdCMDBundle.png"/></a>
