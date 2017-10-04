@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import net.tirasa.connid.bundles.cmd.CmdConnection;
+import org.identityconnectors.common.IOUtil;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
@@ -62,8 +63,8 @@ public abstract class CmdExec {
 
         for (final Attribute attr : attrs) {
             if (attr.getValue() != null && !attr.getValue().isEmpty()) {
-                
                 LOG.ok("Environment variable {0}: {1}", attr.getName(), attr.getValue().get(0));
+
                 if (OperationalAttributes.PASSWORD_NAME.equals(attr.getName())) {
                     final GuardedString gpasswd = AttributeUtil.getPasswordValue(attrs);
                     if (gpasswd != null) {
@@ -76,7 +77,7 @@ public abstract class CmdExec {
                         });
                     }
                 } else {
-                    res.add(attr.getName() + "=" + attr.getValue().get(0));
+                    res.add(attr.getName() + "=" + IOUtil.join(attr.getValue().toArray(), ','));
                 }
             }
         }
