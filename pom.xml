@@ -28,7 +28,7 @@
     
   <groupId>org.connid.bundles</groupId>
   <artifactId>org.connid.bundles.cmd</artifactId>
-  <version>0.1.1</version>    
+  <version>0.1.2-SNAPSHOT</version>    
     
   <name>ConnId Bundles: CMD</name>
 
