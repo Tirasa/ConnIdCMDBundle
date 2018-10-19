@@ -13,30 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.tirasa.connid.bundles.cmd.utilities;
+package net.tirasa.connid.bundles.cmd;
 
 import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 
-public class AttributesTestValue extends SharedTestMethods {
+public class AttributesTestValue extends AbstractTest {
 
     private static final String WRONG_USERNAME = "wronguser";
+
     private static final String PASSWORD = "password";
-    private final GuardedString GUARDED_PASSWORD =
-            new GuardedString(getPassword().toCharArray());
-    private final GuardedString NEW_GUARDED_PASSWORD =
-            new GuardedString(getNewPassword().toCharArray());
-    private final GuardedString WRONG_GUARDED_PASSWORD =
-            new GuardedString("wrongpassword".toCharArray());
+
+    private final GuardedString GUARDED_PASSWORD = new GuardedString(getPassword().toCharArray());
+
+    private final GuardedString NEW_GUARDED_PASSWORD = new GuardedString(getNewPassword().toCharArray());
+
+    private final GuardedString WRONG_GUARDED_PASSWORD = new GuardedString("wrongpassword".toCharArray());
+
     private static final String NEW_PASSWORD = "newpassword";
-    private final ObjectClass WRONG_OBJECTCLASS =
-            new ObjectClass("WRONG_OBJECTCLASS");
+
+    private final ObjectClass WRONG_OBJECTCLASS = new ObjectClass("WRONG_OBJECTCLASS");
+
     private static final String WRONG_GROUPNAME = "wronggroup";
 
     public String getUsername() {
         return "createtest" + randomNumber();
     }
-    
+
     public String getNewUsername() {
         return "createtest" + randomNumber();
     }

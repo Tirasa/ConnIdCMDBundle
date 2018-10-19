@@ -15,24 +15,26 @@
  */
 package net.tirasa.connid.bundles.cmd;
 
-import net.tirasa.connid.bundles.cmd.utilities.SharedTestMethods;
-import org.junit.Assert;
+import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.junit.Test;
 
-public class CmdConfigurationTests extends SharedTestMethods {
+public class CmdTest extends AbstractTest {
 
-    /**
-     * Tests setting and validating the parameters provided.
-     */
     @Test
-    public final void testValidate() {
-        final CmdConfiguration config = new CmdConfiguration();
-        try {
-            config.validate();
-            Assert.fail();
-        } catch (RuntimeException e) {
-            // expected because configuration is incomplete
-        }
+    public final void testConnection() {
+        final CmdConnector connector = new CmdConnector();
+        connector.init(createConfiguration());
+        connector.test();
+        connector.dispose();
     }
 
+    @Test(expected = ConnectorException.class)
+    public final void testWrongConnection() {
+        final CmdConnector connector = new CmdConnector();
+        CmdConfiguration cmdConfiguration = createConfiguration();
+        cmdConfiguration.setTestCmdPath("/tmp/wrong.sh");
+        connector.init(cmdConfiguration);
+        connector.test();
+        connector.dispose();
+    }
 }

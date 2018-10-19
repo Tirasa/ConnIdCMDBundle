@@ -13,38 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.tirasa.connid.bundles.cmd.realenvironment;
+package net.tirasa.connid.bundles.cmd;
 
-import net.tirasa.connid.bundles.cmd.CmdConnector;
-import net.tirasa.connid.bundles.cmd.utilities.AttributesTestValue;
-import net.tirasa.connid.bundles.cmd.utilities.SharedTestMethods;
 import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.ObjectClass;
+import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
 import org.identityconnectors.framework.common.objects.Uid;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CmdUpdateTest extends SharedTestMethods {
+public class CmdUpdateTest extends AbstractTest {
 
     private CmdConnector connector;
 
     private Name name;
 
-    private AttributesTestValue attrs = null;
+    private AttributesTestValue attrs;
 
     @Before
-    public final void initTest() {
+    public void initTest() {
         attrs = new AttributesTestValue();
         connector = new CmdConnector();
         connector.init(createConfiguration());
         name = new Name(attrs.getUsername());
+
+        connector.init(createConfiguration());
+    }
+
+    @After
+    public void dispose() {
+        connector.dispose();
     }
 
     @Test
     public final void testConnection() {
-        connector.init(createConfiguration());
-        connector.update(ObjectClass.ACCOUNT, new Uid("massi"),
-                createSetOfAttributes(name, attrs.getPassword(), true), null);
-        connector.dispose();
+        connector.update(ObjectClass.ACCOUNT, new Uid("test"),
+                createSetOfAttributes(name, attrs.getPassword(), true), new OperationOptionsBuilder().build());
     }
 }

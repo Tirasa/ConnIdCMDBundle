@@ -16,7 +16,6 @@
 package net.tirasa.connid.bundles.cmd;
 
 import java.net.ConnectException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import net.tirasa.connid.bundles.cmd.methods.CmdCreate;
@@ -65,19 +64,18 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
 
     @Override
     public Uid create(final ObjectClass oc, final Set<Attribute> attributes, final OperationOptions oo) {
-        LOG.ok("Create parameters:");
-        LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
+        if (LOG.isOk()) {
+            LOG.ok("Create parameters:");
+            LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
 
-        final Iterator<Attribute> i = attributes.iterator();
-        Attribute attr;
-        while (i.hasNext()) {
-            attr = i.next();
-            LOG.ok("Attribute {0}: {1}", attr.getName(), attr.getValue());
-        }
-        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-            final String key = entrySet.getKey();
-            final Object value = entrySet.getValue();
-            LOG.ok("OperationOptions {0}: {1}", key, value);
+            for (Attribute attr : attributes) {
+                LOG.ok("Attribute {0}: {1}", attr.getName(), attr.getValue());
+            }
+            for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                final String key = entrySet.getKey();
+                final Object value = entrySet.getValue();
+                LOG.ok("OperationOptions {0}: {1}", key, value);
+            }
         }
 
         return new CmdCreate(oc, cmdConfiguration.getCreateCmdPath(), attributes).execCreateCmd();
@@ -85,19 +83,16 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
 
     @Override
     public Uid update(final ObjectClass oc, final Uid uid, final Set<Attribute> attributes, final OperationOptions oo) {
-        LOG.ok("Update parameters:");
-        LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
-        LOG.ok("Uid: {0}", uid.getUidValue());
-        final Iterator<Attribute> i = attributes.iterator();
-        Attribute attr;
-        while (i.hasNext()) {
-            attr = i.next();
-            LOG.ok("Attribute {0}: {1}", attr.getName(), attr.getValue());
-        }
-        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-            final String key = entrySet.getKey();
-            final Object value = entrySet.getValue();
-            LOG.ok("   > OperationOptions {0}", key + ": " + value);
+        if (LOG.isOk()) {
+            LOG.ok("Update parameters:");
+            LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
+            LOG.ok("Uid: {0}", uid.getUidValue());
+            for (Attribute attr : attributes) {
+                LOG.ok("Attribute {0}: {1}", attr.getName(), attr.getValue());
+            }
+            for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                LOG.ok("   > OperationOptions {0}", entrySet.getKey() + ": " + entrySet.getValue());
+            }
         }
 
         return new CmdUpdate(oc, cmdConfiguration.getUpdateCmdPath(), uid, attributes).execUpdateCmd();
@@ -105,13 +100,13 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
 
     @Override
     public void delete(final ObjectClass oc, final Uid uid, final OperationOptions oo) {
-        LOG.ok("Delete parameters:");
-        LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
-        LOG.ok("Uid: {0}", uid.getUidValue());
-        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-            final String key = entrySet.getKey();
-            final Object value = entrySet.getValue();
-            LOG.info("OperationOptions {0}: {1}", key, value);
+        if (LOG.isOk()) {
+            LOG.ok("Delete parameters:");
+            LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
+            LOG.ok("Uid: {0}", uid.getUidValue());
+            for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                LOG.ok("OperationOptions {0}: {1}", entrySet.getKey(), entrySet.getValue());
+            }
         }
 
         new CmdDelete(oc, cmdConfiguration.getDeleteCmdPath(), uid).execDeleteCmd();
@@ -125,14 +120,18 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
 
     @Override
     public void executeQuery(
-            final ObjectClass oc, final Operand t, final ResultsHandler rh, final OperationOptions oo) {
-        LOG.ok("Search parameters:");
-        LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
-        LOG.ok("Operand is uid: {0}", t.isUid());
-        for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-            final String key = entrySet.getKey();
-            final Object value = entrySet.getValue();
-            LOG.ok("OperationOptions {0}: {1}", key, value);
+            final ObjectClass oc,
+            final Operand t,
+            final ResultsHandler rh,
+            final OperationOptions oo) {
+
+        if (LOG.isOk()) {
+            LOG.ok("Search parameters:");
+            LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
+            LOG.ok("Operand is uid: {0}", t.isUid());
+            for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                LOG.ok("OperationOptions {0}: {1}", entrySet.getKey(), entrySet.getValue());
+            }
         }
 
         try {
