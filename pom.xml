@@ -94,49 +94,19 @@
     </dependency>
         
     <!-- TEST -->
-        
     <dependency>
       <groupId>org.connid</groupId>
       <artifactId>connid-test-common</artifactId>
       <version>${connid.version}</version>
       <scope>test</scope>
     </dependency>
-        
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-    
-  <profiles>
-    <profile>
-      <id>it</id>
-      <build>
-        <plugins>            
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <inherited>true</inherited>
-            <configuration>
-              <includes>
-                <include>**/*Test.java</include>
-              </includes>
-            </configuration>
-          </plugin>
-        </plugins>
-                
-        <defaultGoal>clean verify</defaultGoal>
-        <testResources>
-          <testResource>
-            <directory>src/test/resources</directory>
-            <filtering>true</filtering>
-          </testResource>
-        </testResources>
-      </build>
-    </profile>
-  </profiles>
-    
+
   <build>
     <plugins>
       <plugin>        
@@ -234,17 +204,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>   
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <inherited>true</inherited>
-        <configuration>
-          <includes>
-            <include>**/*Tests.java</include>
-          </includes>
-        </configuration>
       </plugin>
       
       <plugin>
@@ -300,5 +259,4 @@
       </snapshots>
     </repository>
   </repositories>
-
 </project>

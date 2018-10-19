@@ -15,11 +15,12 @@
  */
 package org.connid.bundles.cmd;
 
-import org.connid.bundles.cmd.utilities.SharedTestMethods;
-import org.junit.Assert;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
-public class CmdConfigurationTests extends SharedTestMethods {
+public class CmdConfigurationTest extends AbstractTest {
 
     /**
      * Tests setting and validating the parameters provided.
@@ -29,10 +30,10 @@ public class CmdConfigurationTests extends SharedTestMethods {
         final CmdConfiguration config = new CmdConfiguration();
         try {
             config.validate();
-            Assert.fail();
+            fail();
         } catch (RuntimeException e) {
             // expected because configuration is incomplete
+            assertNotNull(e);
         }
     }
-
 }

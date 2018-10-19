@@ -13,66 +13,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.connid.bundles.cmd.realenvironment;
+package org.connid.bundles.cmd;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
-import org.connid.bundles.cmd.CmdConnector;
 import org.connid.bundles.cmd.search.Operand;
 import org.connid.bundles.cmd.search.Operator;
-import org.connid.bundles.cmd.utilities.AttributesTestValue;
-import org.connid.bundles.cmd.utilities.SharedTestMethods;
 import org.identityconnectors.framework.common.objects.ConnectorObject;
 import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.ObjectClass;
+import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
 import org.identityconnectors.framework.common.objects.ResultsHandler;
 import org.identityconnectors.framework.common.objects.Uid;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CmdExecuteQueryTest extends SharedTestMethods {
+public class CmdExecuteQueryTest extends AbstractTest {
 
-    private CmdConnector connector = null;
+    private CmdConnector connector;
 
-    private Name name = null;
+    private Name name;
 
-    private Uid newAccount = null;
+    private Uid newAccount;
 
-    private AttributesTestValue attrs = null;
+    private AttributesTestValue attrs;
 
     @Before
-    public final void initTest() {
+    public void initTest() {
         attrs = new AttributesTestValue();
         connector = new CmdConnector();
         connector.init(createConfiguration());
         name = new Name(attrs.getUsername());
-    }
 
-    @Test
-    public final void searchUser() {
-        newAccount = connector.create(
-                ObjectClass.ACCOUNT, createSetOfAttributes(name, attrs.getPassword(), true), null);
-//        assertEquals(name.getNameValue(), newAccount.getUidValue());
-
-        final Set<ConnectorObject> actual = new HashSet<ConnectorObject>();
-        connector.executeQuery(ObjectClass.ACCOUNT,
-                new Operand(Operator.EQ, Uid.NAME, newAccount.getUidValue(), false), new ResultsHandler() {
-
-                    @Override
-                    public boolean handle(final ConnectorObject connObj) {
-                        actual.add(connObj);
-                        return true;
-                    }
-                }, null);
-//        for (ConnectorObject connObj : actual) {
-//            assertEquals(name.getNameValue(), connObj.getName().getNameValue());
-//        }
-//        connector.delete(ObjectClass.ACCOUNT, newAccount, null);
+        connector.init(createConfiguration());
     }
 
     @After
     public final void close() {
         connector.dispose();
+    }
+
+    @Test
+    public void searchUser() {
+        newAccount = connector.create(
+                ObjectClass.ACCOUNT,
+                createSetOfAttributes(name, attrs.getPassword(), true),
+                new OperationOptionsBuilder().build());
+        assertEquals(name.getNameValue(), newAccount.getUidValue());
+
+        final Set<ConnectorObject> actual = new HashSet<ConnectorObject>();
+        connector.executeQuery(ObjectClass.ACCOUNT,
+                new Operand(Operator.EQ, Uid.NAME, newAccount.getUidValue(), false), new ResultsHandler() {
+
+            @Override
+            public boolean handle(final ConnectorObject connObj) {
+                actual.add(connObj);
+                return true;
+            }
+        }, new OperationOptionsBuilder().build());
+        for (ConnectorObject connObj : actual) {
+            assertEquals(name.getNameValue(), connObj.getName().getNameValue());
+        }
+        connector.delete(ObjectClass.ACCOUNT, newAccount, new OperationOptionsBuilder().build());
     }
 }

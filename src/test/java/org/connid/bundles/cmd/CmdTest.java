@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.connid.bundles.cmd.realenvironment;
+package org.connid.bundles.cmd;
 
-import org.connid.bundles.cmd.CmdConfiguration;
-import org.connid.bundles.cmd.CmdConnector;
-import org.connid.bundles.cmd.utilities.SharedTestMethods;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.junit.Test;
 
-public class CmdTest extends SharedTestMethods {
+public class CmdTest extends AbstractTest {
 
     @Test
     public final void testConnection() {

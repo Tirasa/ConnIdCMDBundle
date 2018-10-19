@@ -13,38 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.connid.bundles.cmd.realenvironment;
+package org.connid.bundles.cmd;
 
-import org.connid.bundles.cmd.CmdConnector;
-import org.connid.bundles.cmd.utilities.AttributesTestValue;
-import org.connid.bundles.cmd.utilities.SharedTestMethods;
 import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.ObjectClass;
-import org.identityconnectors.framework.common.objects.Uid;
+import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CmdUpdateTest extends SharedTestMethods {
+public class CmdCreateTest extends AbstractTest {
 
     private CmdConnector connector;
 
     private Name name;
 
-    private AttributesTestValue attrs = null;
+    private AttributesTestValue attrs;
 
     @Before
-    public final void initTest() {
+    public void initTest() {
         attrs = new AttributesTestValue();
         connector = new CmdConnector();
         connector.init(createConfiguration());
         name = new Name(attrs.getUsername());
+
+        connector.init(createConfiguration());
+    }
+
+    @After
+    public void dispose() {
+        connector.dispose();
     }
 
     @Test
-    public final void testConnection() {
-        connector.init(createConfiguration());
-        connector.update(ObjectClass.ACCOUNT, new Uid("massi"),
-                createSetOfAttributes(name, attrs.getPassword(), true), null);
-        connector.dispose();
+    public void create() {
+        connector.create(
+                ObjectClass.ACCOUNT,
+                createSetOfAttributes(name, attrs.getPassword(), true),
+                new OperationOptionsBuilder().build());
+    }
+
+    @Test
+    public void issueCMD7() {
+        connector.create(
+                ObjectClass.ACCOUNT,
+                createSetOfAttributes(name, "x1:x?x}Xxxx\\", true),
+                new OperationOptionsBuilder().build());
     }
 }
