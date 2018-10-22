@@ -40,12 +40,9 @@ public class CmdCreate extends CmdExec {
     }
 
     public Uid execCreateCmd() {
-
-        final Name name = AttributeUtil.getNameFromAttributes(attrs);
-
+        Name name = AttributeUtil.getNameFromAttributes(attrs);
         if (name == null || StringUtil.isBlank(name.getNameValue())) {
-            throw new IllegalArgumentException(
-                    "No Name attribute provided in the attributes");
+            throw new IllegalArgumentException("No Name provided in the attributes");
         }
         LOG.info("Executing creation for {0}", name.getNameValue());
 

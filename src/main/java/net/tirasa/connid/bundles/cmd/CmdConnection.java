@@ -17,8 +17,6 @@ package net.tirasa.connid.bundles.cmd;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
-import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.common.logging.Log;
 
 public class CmdConnection {
@@ -40,16 +38,19 @@ public class CmdConnection {
     public Process execute(final String path, final String[] envp) throws IOException {
         LOG.info("Execute script {0} {1}", path, Arrays.asList(envp == null ? new String[0] : envp));
 
-        final ProcessBuilder builder = new ProcessBuilder(path.split(" "));
-
+        ProcessBuilder builder = new ProcessBuilder(path.split(" "));
         if (envp != null) {
-            for (final String env : envp) {
-                final Map.Entry<Object, Object> entry = StringUtil.toProperties(env).entrySet().iterator().next();
-                builder.environment().put(entry.getKey().toString(), entry.getValue().toString());
+            for (String env : envp) {
+                String[] split = env.split("=");
+                if (split == null || split.length < 2) {
+                    LOG.error("Could not parse {}", env);
+                } else {
+                    builder.environment().put(split[0], split[1]);
+                }
             }
         }
 
-        final Process proc = builder.start();
+        Process proc = builder.start();
         proc.getOutputStream().close();
         return proc;
     }
