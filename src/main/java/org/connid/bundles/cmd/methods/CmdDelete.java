@@ -15,6 +15,10 @@
  */
 package org.connid.bundles.cmd.methods;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.connid.bundles.cmd.CmdConfiguration;
+import org.identityconnectors.common.Pair;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.Uid;
@@ -36,15 +40,18 @@ public class CmdDelete extends CmdExec {
 
     public void execDeleteCmd() {
         LOG.info("Executing deletion for {0}", uid);
-        
+
         waitFor(exec(scriptPath, createEnv()));
     }
 
-    private String[] createEnv() {
+    private List<Pair<String, String>> createEnv() {
         LOG.ok("Creating environment for deletion with:");
-        LOG.ok("ObjectClass: {0}" , oc.getObjectClassValue());
-        LOG.ok("Environment variable {0}: {1}" , uid.getName(), uid.getUidValue());
-        
-        return new String[] {"OBJECT_CLASS=" + oc.getObjectClassValue(), uid.getName() + "=" + uid.getUidValue()};
+        LOG.ok("ObjectClass: {0}", oc.getObjectClassValue());
+        LOG.ok("Environment variable {0}: {1}", uid.getName(), uid.getUidValue());
+
+        List<Pair<String, String>> env = new ArrayList<Pair<String, String>>();
+        env.add(new Pair<String, String>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
+        env.add(new Pair<String, String>(uid.getName(), uid.getUidValue()));
+        return env;
     }
 }

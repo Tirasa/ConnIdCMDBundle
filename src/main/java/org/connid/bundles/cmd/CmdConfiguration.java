@@ -22,6 +22,8 @@ import org.identityconnectors.framework.spi.ConfigurationProperty;
 
 public class CmdConfiguration extends AbstractConfiguration {
 
+    public static final String OBJECT_CLASS = "OBJECT_CLASS";
+
     private String createCmdPath = "";
 
     private String updateCmdPath = "";

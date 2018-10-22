@@ -16,7 +16,8 @@
 package org.connid.bundles.cmd;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
+import org.identityconnectors.common.Pair;
 import org.identityconnectors.common.logging.Log;
 
 public class CmdConnection {
@@ -35,18 +36,13 @@ public class CmdConnection {
     private CmdConnection() {
     }
 
-    public Process execute(final String path, final String[] envp) throws IOException {
-        LOG.info("Execute script {0} {1}", path, Arrays.asList(envp == null ? new String[0] : envp));
+    public Process execute(final String path, final List<Pair<String, String>> env) throws IOException {
+        LOG.info("Execute script {0} {1}", path, env);
 
         ProcessBuilder builder = new ProcessBuilder(path.split(" "));
-        if (envp != null) {
-            for (String env : envp) {
-                String[] split = env.split("=");
-                if (split == null || split.length < 2) {
-                    LOG.error("Could not parse {}", env);
-                } else {
-                    builder.environment().put(split[0], split[1]);
-                }
+        if (env != null) {
+            for (Pair<String, String> entry : env) {
+                builder.environment().put(entry.first, entry.second);
             }
         }
 

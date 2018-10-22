@@ -18,7 +18,9 @@ package org.connid.bundles.cmd.methods;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.connid.bundles.cmd.CmdConfiguration;
 import org.connid.bundles.cmd.CmdConnection;
+import org.identityconnectors.common.Pair;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
@@ -38,7 +40,7 @@ public abstract class CmdExec {
         this.oc = oc;
     }
 
-    protected Process exec(final String path, final String[] env) {
+    protected Process exec(final String path, final List<Pair<String, String>> env) {
         try {
             return CmdConnection.openConnection().execute(path, env);
         } catch (Exception e) {
@@ -47,20 +49,20 @@ public abstract class CmdExec {
         }
     }
 
-    protected String[] createEnv(final Set<Attribute> attrs) {
+    protected List<Pair<String, String>> createEnv(final Set<Attribute> attrs) {
         return createEnv(attrs, null);
     }
 
-    protected String[] createEnv(final Set<Attribute> attrs, final Uid uid) {
-        final List<String> res = new ArrayList<String>();
+    protected List<Pair<String, String>> createEnv(final Set<Attribute> attrs, final Uid uid) {
+        final List<Pair<String, String>> env = new ArrayList<Pair<String, String>>();
 
         LOG.ok("Creating environment with:");
         if (oc != null) {
-            LOG.ok("OBJECT_CLASS: {0}", oc.getObjectClassValue());
-            res.add("OBJECT_CLASS=" + oc.getObjectClassValue());
+            LOG.ok(CmdConfiguration.OBJECT_CLASS + ": {0}", oc.getObjectClassValue());
+            env.add(new Pair<String, String>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
         }
 
-        for (final Attribute attr : attrs) {
+        for (Attribute attr : attrs) {
             if (attr.getValue() != null && !attr.getValue().isEmpty()) {
                 LOG.ok("Environment variable {0}: {1}", attr.getName(), attr.getValue().get(0));
 
@@ -71,22 +73,24 @@ public abstract class CmdExec {
 
                             @Override
                             public void access(char[] clearChars) {
-                                res.add(OperationalAttributes.PASSWORD_NAME + "=" + new String(clearChars));
+                                env.add(new Pair<String, String>(
+                                        OperationalAttributes.PASSWORD_NAME, new String(clearChars)));
                             }
                         });
                     }
                 } else {
-                    res.add(attr.getName() + "=" + join(attr.getValue().toArray(), ','));
+                    env.add(new Pair<String, String>(
+                            attr.getName(), join(attr.getValue().toArray(), ',')));
                 }
             }
         }
 
         if (uid != null && AttributeUtil.find(Uid.NAME, attrs) == null) {
             LOG.ok("Environment variable {0}: {1}", Uid.NAME, uid.getUidValue());
-            res.add(Uid.NAME + "=" + uid.getUidValue());
+            env.add(new Pair<String, String>(Uid.NAME, uid.getUidValue()));
         }
 
-        return res.toArray(new String[res.size()]);
+        return env;
     }
 
     // backport from 1.3.3.1

@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import org.connid.bundles.cmd.CmdConfiguration;
 import org.connid.bundles.cmd.search.Operand;
+import org.identityconnectors.common.Pair;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.common.security.GuardedString;
@@ -88,17 +90,17 @@ public class CmdExecuteQuery extends CmdExec {
         waitFor(proc);
     }
 
-    private String[] createEnv() {
-        final List<String> attributes = new ArrayList<String>();
+    private List<Pair<String, String>> createEnv() {
+        List<Pair<String, String>> attributes = new ArrayList<Pair<String, String>>();
 
         LOG.ok("Creating environment for search with:");
-        LOG.ok("OBJECT_CLASS: {0}", oc.getObjectClassValue());
+        LOG.ok(CmdConfiguration.OBJECT_CLASS + ": {0}", oc.getObjectClassValue());
         LOG.ok("Query filter {0}= {1}", filter.getAttributeName(), filter.getAttributeValue());
 
-        attributes.add(filter.getAttributeName() + "=" + filter.getAttributeValue());
-        attributes.add("OBJECT_CLASS=" + oc.getObjectClassValue());
+        attributes.add(new Pair<String, String>(filter.getAttributeName(), filter.getAttributeValue()));
+        attributes.add(new Pair<String, String>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
 
-        return attributes.toArray(new String[attributes.size()]);
+        return attributes;
     }
 
     private void fillUserHandler(final String searchScriptOutput) throws ConnectException {
