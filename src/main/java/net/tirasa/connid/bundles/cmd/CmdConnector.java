@@ -128,7 +128,8 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
         if (LOG.isOk()) {
             LOG.ok("Search parameters:");
             LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
-            LOG.ok("Operand is uid: {0}", t.isUid());
+            //t.isUid() COULD BE NOT SET AND MASSIVE SEARCH FAILS
+            //LOG.ok("Operand is uid: {0}", t.isUid());
             for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
                 LOG.ok("OperationOptions {0}: {1}", entrySet.getKey(), entrySet.getValue());
             }
