@@ -79,4 +79,9 @@ public class CmdExecuteQueryTest extends AbstractTest {
         }
         connector.delete(ObjectClass.ACCOUNT, newAccount, new OperationOptionsBuilder().build());
     }
+
+    @Test
+    public void issueCMD8() {
+        connector.executeQuery(ObjectClass.ACCOUNT, null, null, null);
+    }
 }

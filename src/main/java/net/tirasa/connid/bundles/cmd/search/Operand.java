@@ -42,7 +42,7 @@ public class Operand {
         this.operator = operator;
         this.firstOperand = firstOperand;
         this.secondOperand = secondOperand;
-    }   
+    }
 
     public final Operand getFirstOperand() {
         return firstOperand;
@@ -70,5 +70,16 @@ public class Operand {
 
     public final Operator getOperator() {
         return operator;
+    }
+
+    @Override
+    public String toString() {
+        return "Operand{"
+                + "operator=" + operator
+                + ", attributeName=" + attributeName
+                + ", attributeValue=" + attributeValue
+                + ", not=" + not
+                + ", firstOperand=" + firstOperand
+                + ", secondOperand=" + secondOperand + '}';
     }
 }
