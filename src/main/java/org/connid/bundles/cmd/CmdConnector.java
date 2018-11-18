@@ -71,10 +71,12 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
             for (Attribute attr : attributes) {
                 LOG.ok("Attribute {0}: {1}", attr.getName(), attr.getValue());
             }
-            for (final Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-                final String key = entrySet.getKey();
-                final Object value = entrySet.getValue();
-                LOG.ok("OperationOptions {0}: {1}", key, value);
+            if (oo != null) {
+                for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                    final String key = entrySet.getKey();
+                    final Object value = entrySet.getValue();
+                    LOG.ok("OperationOptions {0}: {1}", key, value);
+                }
             }
         }
 
@@ -90,8 +92,10 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
             for (Attribute attr : attributes) {
                 LOG.ok("Attribute {0}: {1}", attr.getName(), attr.getValue());
             }
-            for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-                LOG.ok("   > OperationOptions {0}", entrySet.getKey() + ": " + entrySet.getValue());
+            if (oo != null) {
+                for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                    LOG.ok("   > OperationOptions {0}", entrySet.getKey() + ": " + entrySet.getValue());
+                }
             }
         }
 
@@ -104,8 +108,10 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
             LOG.ok("Delete parameters:");
             LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
             LOG.ok("Uid: {0}", uid.getUidValue());
-            for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-                LOG.ok("OperationOptions {0}: {1}", entrySet.getKey(), entrySet.getValue());
+            if (oo != null) {
+                for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                    LOG.ok("OperationOptions {0}: {1}", entrySet.getKey(), entrySet.getValue());
+                }
             }
         }
 
@@ -121,21 +127,23 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
     @Override
     public void executeQuery(
             final ObjectClass oc,
-            final Operand t,
+            final Operand operand,
             final ResultsHandler rh,
             final OperationOptions oo) {
 
         if (LOG.isOk()) {
             LOG.ok("Search parameters:");
             LOG.ok("ObjectClass {0}", oc.getObjectClassValue());
-            LOG.ok("Operand is uid: {0}", t.isUid());
-            for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
-                LOG.ok("OperationOptions {0}: {1}", entrySet.getKey(), entrySet.getValue());
+            LOG.ok("Operand {0}", operand);
+            if (oo != null) {
+                for (Map.Entry<String, Object> entrySet : oo.getOptions().entrySet()) {
+                    LOG.ok("OperationOptions {0}: {1}", entrySet.getKey(), entrySet.getValue());
+                }
             }
         }
 
         try {
-            new CmdExecuteQuery(oc, cmdConfiguration.getSearchCmdPath(), t, rh).execQuery();
+            new CmdExecuteQuery(oc, cmdConfiguration.getSearchCmdPath(), operand, rh).execQuery();
         } catch (ConnectException ex) {
             LOG.error("Error in connection process", ex);
         }
