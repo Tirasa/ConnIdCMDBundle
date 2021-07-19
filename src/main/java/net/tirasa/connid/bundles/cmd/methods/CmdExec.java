@@ -20,10 +20,11 @@ import java.util.List;
 import java.util.Set;
 import net.tirasa.connid.bundles.cmd.CmdConnection;
 import net.tirasa.connid.bundles.cmd.CmdConfiguration;
-import org.identityconnectors.common.IOUtil;
 import org.identityconnectors.common.Pair;
+import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.common.security.GuardedString;
+import org.identityconnectors.common.security.SecurityUtil;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeUtil;
@@ -36,9 +37,12 @@ public abstract class CmdExec {
     private static final Log LOG = Log.getLog(CmdExec.class);
 
     protected final ObjectClass oc;
+    
+    protected final CmdConfiguration cmdConfiguration;
 
-    public CmdExec(final ObjectClass oc) {
+    public CmdExec(final ObjectClass oc, final CmdConfiguration cmdConfiguration) {
         this.oc = oc;
+        this.cmdConfiguration = cmdConfiguration;
     }
 
     protected Process exec(final String path, final List<Pair<String, String>> env) {
@@ -50,17 +54,22 @@ public abstract class CmdExec {
         }
     }
 
-    protected List<Pair<String, String>> createEnv(final Set<Attribute> attrs) {
-        return createEnv(attrs, null);
+    protected List<Pair<String, String>> createEnv(
+            final Set<Attribute> attrs,
+            final CmdConfiguration cmdConfiguration) {
+        return createEnv(attrs, null, cmdConfiguration);
     }
 
-    protected List<Pair<String, String>> createEnv(final Set<Attribute> attrs, final Uid uid) {
-        final List<Pair<String, String>> env = new ArrayList<Pair<String, String>>();
+    protected List<Pair<String, String>> createEnv(
+            final Set<Attribute> attrs,
+            final Uid uid,
+            final CmdConfiguration cmdConfiguration) {
+        final List<Pair<String, String>> env = new ArrayList<>();
 
         LOG.ok("Creating environment with:");
         if (oc != null) {
             LOG.ok(CmdConfiguration.OBJECT_CLASS + ": {0}", oc.getObjectClassValue());
-            env.add(new Pair<String, String>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
+            env.add(new Pair<>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
         }
 
         for (Attribute attr : attrs) {
@@ -68,30 +77,47 @@ public abstract class CmdExec {
                 LOG.ok("Environment variable {0}: {1}", attr.getName(), attr.getValue().get(0));
 
                 if (OperationalAttributes.PASSWORD_NAME.equals(attr.getName())) {
-                    final GuardedString gpasswd = AttributeUtil.getPasswordValue(attrs);
+                    GuardedString gpasswd = AttributeUtil.getPasswordValue(attrs);
                     if (gpasswd != null) {
-                        gpasswd.access(new GuardedString.Accessor() {
-
-                            @Override
-                            public void access(char[] clearChars) {
-                                env.add(new Pair<String, String>(
-                                        OperationalAttributes.PASSWORD_NAME, new String(clearChars)));
-                            }
-                        });
+                        env.add(new Pair<>(OperationalAttributes.PASSWORD_NAME, SecurityUtil.decrypt(gpasswd)));
                     }
                 } else {
-                    env.add(new Pair<String, String>(
-                            attr.getName(), IOUtil.join(attr.getValue().toArray(), ',')));
+                    env.add(new Pair<>(attr.getName(), StringUtil.join(attr.getValue().toArray(), ',')));
                 }
             }
         }
-
+        
+        if (cmdConfiguration.isServerInfoEnv()) {
+            env.addAll(getConfigurationEnvs(cmdConfiguration));
+        }
+        
         if (uid != null && AttributeUtil.find(Uid.NAME, attrs) == null) {
             LOG.ok("Environment variable {0}: {1}", Uid.NAME, uid.getUidValue());
-            env.add(new Pair<String, String>(Uid.NAME, uid.getUidValue()));
+            env.add(new Pair<>(Uid.NAME, uid.getUidValue()));
         }
 
         return env;
+
+    }
+
+    protected List<Pair<String, String>> getConfigurationEnvs(final CmdConfiguration cmdConfiguration) {
+        final List<Pair<String, String>> confEnvs = new ArrayList<>();
+
+        LOG.ok("Creating configuration environment with:");
+
+        if (StringUtil.isNotEmpty(cmdConfiguration.getHost())) {
+            confEnvs.add(new Pair<>(CmdConfiguration.CMD_HOST, cmdConfiguration.getHost()));
+        }
+        if (StringUtil.isNotEmpty(cmdConfiguration.getPort())) {
+            confEnvs.add(new Pair<>(CmdConfiguration.CMD_PORT, cmdConfiguration.getPort()));
+        }
+        if (StringUtil.isNotEmpty(cmdConfiguration.getUser())) {
+            confEnvs.add(new Pair<>(CmdConfiguration.CMD_USER, cmdConfiguration.getUser()));
+        }
+        if (StringUtil.isNotEmpty(cmdConfiguration.getHost())) {
+            confEnvs.add(new Pair<>(CmdConfiguration.CMD_PRIVATE_KEY_PATH, cmdConfiguration.getPrivateKeyPath()));
+        }
+        return confEnvs;
     }
 
     protected void waitFor(final Process proc) {

@@ -80,7 +80,7 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
             }
         }
 
-        return new CmdCreate(oc, cmdConfiguration.getCreateCmdPath(), attributes).execCreateCmd();
+        return new CmdCreate(oc, cmdConfiguration, attributes).execCreateCmd();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
             }
         }
 
-        return new CmdUpdate(oc, cmdConfiguration.getUpdateCmdPath(), uid, attributes).execUpdateCmd();
+        return new CmdUpdate(oc, cmdConfiguration, uid, attributes).execUpdateCmd();
     }
 
     @Override
@@ -115,13 +115,13 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
             }
         }
 
-        new CmdDelete(oc, cmdConfiguration.getDeleteCmdPath(), uid).execDeleteCmd();
+        new CmdDelete(oc, cmdConfiguration, uid).execDeleteCmd();
     }
 
     @Override
     public void test() {
         LOG.ok("Remote connection test");
-        new CmdTest(cmdConfiguration.getTestCmdPath()).test();
+        new CmdTest(cmdConfiguration).test();
     }
 
     @Override
@@ -143,7 +143,7 @@ public class CmdConnector implements Connector, CreateOp, UpdateOp, DeleteOp, Te
         }
 
         try {
-            new CmdExecuteQuery(oc, cmdConfiguration.getSearchCmdPath(), operand, rh).execQuery();
+            new CmdExecuteQuery(oc, cmdConfiguration, operand, rh).execQuery();
         } catch (ConnectException ex) {
             LOG.error("Error in connection process", ex);
         }

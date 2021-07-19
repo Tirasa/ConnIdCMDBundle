@@ -15,23 +15,23 @@
  */
 package net.tirasa.connid.bundles.cmd.methods;
 
+import java.util.Collections;
+import net.tirasa.connid.bundles.cmd.CmdConfiguration;
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.framework.common.objects.Attribute;
 
 public class CmdTest extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdTest.class);
 
-    private final String scriptPath;
-
-    public CmdTest(final String scriptPath) {
-        super(null);
-
-        this.scriptPath = scriptPath;
+    public CmdTest(final CmdConfiguration cmdConfiguration) {
+        super(null, cmdConfiguration);
     }
 
     public final void test() {
-        LOG.info("Executing test on {0}", scriptPath);
-        
-        waitFor(exec(scriptPath, null));
+        LOG.info("Executing test on {0}", cmdConfiguration.getTestCmdPath());
+
+        waitFor(exec(cmdConfiguration.getTestCmdPath(),
+                createEnv(Collections.<Attribute>emptySet(), cmdConfiguration)));
     }
 }

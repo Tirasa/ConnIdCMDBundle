@@ -16,6 +16,7 @@
 package net.tirasa.connid.bundles.cmd.methods;
 
 import java.util.Set;
+import net.tirasa.connid.bundles.cmd.CmdConfiguration;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.ObjectClass;
@@ -25,16 +26,17 @@ public class CmdUpdate extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdUpdate.class);
 
-    private String scriptPath = null;
+    
 
     private final Uid uid;
 
     private final Set<Attribute> attrs;
 
-    public CmdUpdate(final ObjectClass oc, final String path, final Uid uid, final Set<Attribute> attrs) {
-        super(oc);
+    public CmdUpdate(final ObjectClass oc,
+            final CmdConfiguration cmdConfiguration,
+            final Uid uid, final Set<Attribute> attrs) {
+        super(oc, cmdConfiguration);
 
-        scriptPath = path;
         this.uid = uid;
         this.attrs = attrs;
     }
@@ -42,7 +44,7 @@ public class CmdUpdate extends CmdExec {
     public Uid execUpdateCmd() {
         LOG.info("Executing the update for {0}", uid);
 
-        waitFor(exec(scriptPath, createEnv(attrs, uid)));
+        waitFor(exec(cmdConfiguration.getUpdateCmdPath(), createEnv(attrs, uid, cmdConfiguration)));
         return uid;
     }
 }

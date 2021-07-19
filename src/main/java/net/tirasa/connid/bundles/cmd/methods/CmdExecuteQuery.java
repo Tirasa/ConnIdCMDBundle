@@ -44,16 +44,14 @@ public class CmdExecuteQuery extends CmdExec {
 
     private static final String ITEM_SEPARATOR = "--- NEW SEARCH RESULT ITEM ---";
 
-    private final String scriptPath;
-
     private final Operand filter;
 
     private final ResultsHandler resultsHandler;
 
-    public CmdExecuteQuery(final ObjectClass oc, final String scriptPath, final Operand filter, final ResultsHandler rh) {
-        super(oc);
+    public CmdExecuteQuery(final ObjectClass oc, final CmdConfiguration cmdConfiguration, final Operand filter,
+            final ResultsHandler rh) {
+        super(oc, cmdConfiguration);
 
-        this.scriptPath = scriptPath;
         this.filter = filter;
         this.resultsHandler = rh;
     }
@@ -63,11 +61,12 @@ public class CmdExecuteQuery extends CmdExec {
 
         if (filter == null) {
             LOG.ok("Full search (no filter) ...");
-            proc = exec(scriptPath, null);
+            proc = exec(cmdConfiguration.getSearchCmdPath(),
+                    cmdConfiguration.isServerInfoEnv() ? getConfigurationEnvs(cmdConfiguration) : null);
             readOutput(proc);
         } else {
             LOG.ok("Search with filter {0} ...", filter);
-            proc = exec(scriptPath, createEnv());
+            proc = exec(cmdConfiguration.getSearchCmdPath(), createEnv());
             switch (filter.getOperator()) {
                 case EQ:
                     readOutput(proc);
@@ -91,15 +90,19 @@ public class CmdExecuteQuery extends CmdExec {
     }
 
     private List<Pair<String, String>> createEnv() {
-        List<Pair<String, String>> attributes = new ArrayList<Pair<String, String>>();
+        List<Pair<String, String>> attributes = new ArrayList<>();
 
         LOG.ok("Creating environment for search with:");
         LOG.ok(CmdConfiguration.OBJECT_CLASS + ": {0}", oc.getObjectClassValue());
         LOG.ok("Query filter {0}= {1}", filter.getAttributeName(), filter.getAttributeValue());
 
-        attributes.add(new Pair<String, String>(filter.getAttributeName(), filter.getAttributeValue()));
-        attributes.add(new Pair<String, String>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
+        attributes.add(new Pair<>(filter.getAttributeName(), filter.getAttributeValue()));
+        attributes.add(new Pair<>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
 
+        if (cmdConfiguration.isServerInfoEnv()) {
+            attributes.addAll(getConfigurationEnvs(cmdConfiguration));
+        }
+        
         return attributes;
     }
 

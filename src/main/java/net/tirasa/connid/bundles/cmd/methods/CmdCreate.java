@@ -16,6 +16,7 @@
 package net.tirasa.connid.bundles.cmd.methods;
 
 import java.util.Set;
+import net.tirasa.connid.bundles.cmd.CmdConfiguration;
 import org.identityconnectors.common.StringUtil;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.objects.Attribute;
@@ -28,15 +29,12 @@ public class CmdCreate extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdCreate.class);
 
-    private final String scriptPath;
-
     private final Set<Attribute> attrs;
 
-    public CmdCreate(final ObjectClass oc, final String path, final Set<Attribute> attrs) {
-        super(oc);
+    public CmdCreate(final ObjectClass oc, final CmdConfiguration cmdConfiguration, final Set<Attribute> attrs) {
+        super(oc, cmdConfiguration);
 
         this.attrs = attrs;
-        scriptPath = path;
     }
 
     public Uid execCreateCmd() {
@@ -46,7 +44,7 @@ public class CmdCreate extends CmdExec {
         }
         LOG.info("Executing creation for {0}", name.getNameValue());
 
-        waitFor(exec(scriptPath, createEnv(attrs)));
+        waitFor(exec(cmdConfiguration.getCreateCmdPath(), createEnv(attrs, cmdConfiguration)));
 
         return new Uid(name.getNameValue());
     }

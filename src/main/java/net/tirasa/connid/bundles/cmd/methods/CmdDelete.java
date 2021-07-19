@@ -27,21 +27,18 @@ public class CmdDelete extends CmdExec {
 
     private static final Log LOG = Log.getLog(CmdDelete.class);
 
-    private String scriptPath = null;
-
     private final Uid uid;
 
-    public CmdDelete(final ObjectClass oc, final String path, final Uid uid) {
-        super(oc);
+    public CmdDelete(final ObjectClass oc, final CmdConfiguration cmdConfiguration, final Uid uid) {
+        super(oc, cmdConfiguration);
 
         this.uid = uid;
-        scriptPath = path;
     }
 
     public void execDeleteCmd() {
         LOG.info("Executing deletion for {0}", uid);
 
-        waitFor(exec(scriptPath, createEnv()));
+        waitFor(exec(cmdConfiguration.getDeleteCmdPath(), createEnv()));
     }
 
     private List<Pair<String, String>> createEnv() {
@@ -49,9 +46,13 @@ public class CmdDelete extends CmdExec {
         LOG.ok("ObjectClass: {0}", oc.getObjectClassValue());
         LOG.ok("Environment variable {0}: {1}", uid.getName(), uid.getUidValue());
 
-        List<Pair<String, String>> env = new ArrayList<Pair<String, String>>();
-        env.add(new Pair<String, String>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
-        env.add(new Pair<String, String>(uid.getName(), uid.getUidValue()));
+        List<Pair<String, String>> env = new ArrayList<>();
+        env.add(new Pair<>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
+        env.add(new Pair<>(uid.getName(), uid.getUidValue()));
+        
+        if (cmdConfiguration.isServerInfoEnv()) {
+            env.addAll(getConfigurationEnvs(cmdConfiguration));
+        }
         return env;
     }
 }
