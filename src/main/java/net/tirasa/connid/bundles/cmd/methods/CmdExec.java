@@ -114,7 +114,7 @@ public abstract class CmdExec {
         if (StringUtil.isNotEmpty(cmdConfiguration.getUser())) {
             confEnvs.add(new Pair<>(CmdConfiguration.CMD_USER, cmdConfiguration.getUser()));
         }
-        if (StringUtil.isNotEmpty(cmdConfiguration.getHost())) {
+        if (StringUtil.isNotEmpty(cmdConfiguration.getPrivateKeyPath())) {
             confEnvs.add(new Pair<>(CmdConfiguration.CMD_PRIVATE_KEY_PATH, cmdConfiguration.getPrivateKeyPath()));
         }
         return confEnvs;
