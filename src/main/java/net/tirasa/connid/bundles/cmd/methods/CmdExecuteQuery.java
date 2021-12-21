@@ -69,14 +69,10 @@ public class CmdExecuteQuery extends CmdExec {
             proc = exec(cmdConfiguration.getSearchCmdPath(), createEnv());
             switch (filter.getOperator()) {
                 case EQ:
-                    readOutput(proc);
-                    break;
                 case SW:
-                    break;
                 case EW:
-                    break;
                 case C:
-                    break;
+                    readOutput(proc);
                 case OR:
                     break;
                 case AND:
@@ -98,6 +94,7 @@ public class CmdExecuteQuery extends CmdExec {
 
         attributes.add(new Pair<>(filter.getAttributeName(), filter.getAttributeValue()));
         attributes.add(new Pair<>(CmdConfiguration.OBJECT_CLASS, oc.getObjectClassValue()));
+        attributes.add(new Pair<>(CmdConfiguration.CMD_OPERATOR, filter.getOperator().toString()));
 
         if (cmdConfiguration.isServerInfoEnv()) {
             attributes.addAll(getConfigurationEnvs(cmdConfiguration));
