@@ -32,6 +32,8 @@ public class CmdConfiguration extends AbstractConfiguration {
 
     public static final String CMD_USER = "CMD_USER";
 
+    public static final String CMD_OPERATOR = "Operator";
+
     private String host;
 
     private String port;
