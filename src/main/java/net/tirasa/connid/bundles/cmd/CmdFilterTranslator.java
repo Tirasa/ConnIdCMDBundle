@@ -22,6 +22,7 @@ import org.identityconnectors.framework.common.objects.AttributeUtil;
 import org.identityconnectors.framework.common.objects.filter.AbstractFilterTranslator;
 import org.identityconnectors.framework.common.objects.filter.ContainsFilter;
 import org.identityconnectors.framework.common.objects.filter.EndsWithFilter;
+import org.identityconnectors.framework.common.objects.filter.EqualsFilter;
 import org.identityconnectors.framework.common.objects.filter.EqualsIgnoreCaseFilter;
 import org.identityconnectors.framework.common.objects.filter.StartsWithFilter;
 import org.identityconnectors.framework.common.objects.filter.StringFilter;
@@ -45,6 +46,18 @@ public class CmdFilterTranslator extends AbstractFilterTranslator<Operand>{
     @Override
     protected Operand createContainsExpression(final ContainsFilter filter, final boolean not) {
         return createOperand(Operator.C, filter, not);
+    }
+
+    @Override
+    protected Operand createEqualsExpression(final EqualsFilter filter, final boolean not) {
+        if (filter == null) {
+            return null;
+        }
+        String value = AttributeUtil.getAsStringValue(filter.getAttribute());
+        if (StringUtil.isBlank(value)) {
+            return null;
+        }
+        return new Operand(Operator.EQ, filter.getAttribute().getName(), value, not);
     }
     
     private Operand createOperand(final Operator op, final StringFilter filter, final boolean not) {
