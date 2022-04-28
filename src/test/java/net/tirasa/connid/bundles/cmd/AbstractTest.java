@@ -24,22 +24,22 @@ import org.identityconnectors.common.security.GuardedString;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.Name;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public class AbstractTest {
 
     private static File SCRIPT;
 
-    @BeforeClass
+    @BeforeAll
     public static void initScript() throws IOException {
         SCRIPT = File.createTempFile("test", ".sh");
         SCRIPT.setExecutable(true);
 
-        PrintWriter writer = new PrintWriter(SCRIPT);
-        writer.write("#!/bin/bash\n");
-        writer.write("export name=$__NAME__\n");
-        writer.write("export password=$__PASSWORD__\n");
-        writer.close();
+        try (PrintWriter writer = new PrintWriter(SCRIPT)) {
+            writer.write("#!/bin/bash\n");
+            writer.write("export name=$__NAME__\n");
+            writer.write("export password=$__PASSWORD__\n");
+        }
     }
 
     protected CmdConfiguration createConfiguration() {
@@ -54,7 +54,6 @@ public class AbstractTest {
     }
 
     protected Set<Attribute> createSetOfAttributes(final Name name, final String password, final boolean status) {
-        AttributesTestValue attrs = new AttributesTestValue();
         GuardedString encPassword = password == null
                 ? null
                 : new GuardedString(password.toCharArray());

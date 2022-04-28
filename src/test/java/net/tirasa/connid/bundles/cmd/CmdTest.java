@@ -15,26 +15,28 @@
  */
 package net.tirasa.connid.bundles.cmd;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CmdTest extends AbstractTest {
 
     @Test
     public final void testConnection() {
-        final CmdConnector connector = new CmdConnector();
+        CmdConnector connector = new CmdConnector();
         connector.init(createConfiguration());
         connector.test();
         connector.dispose();
     }
 
-    @Test(expected = ConnectorException.class)
+    @Test
     public final void testWrongConnection() {
-        final CmdConnector connector = new CmdConnector();
+        CmdConnector connector = new CmdConnector();
         CmdConfiguration cmdConfiguration = createConfiguration();
         cmdConfiguration.setTestCmdPath("/tmp/wrong.sh");
         connector.init(cmdConfiguration);
-        connector.test();
+        assertThrows(ConnectorException.class, () -> connector.test());
         connector.dispose();
     }
 }

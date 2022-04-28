@@ -23,7 +23,7 @@
   <parent>
     <groupId>net.tirasa.connid</groupId>
     <artifactId>connid</artifactId>
-    <version>1.4.5.1</version>
+    <version>1.5.1.0</version>
   </parent>
     
   <groupId>net.tirasa.connid.bundles</groupId>
@@ -76,7 +76,7 @@
   </mailingLists>
 
   <properties>
-    <connid.version>1.4.5.1</connid.version>
+    <connid.version>1.5.1.0</connid.version>
         
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -102,8 +102,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -113,11 +113,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version> 
+        <version>3.10.1</version> 
         <inherited>false</inherited>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <useIncrementalCompilation>false</useIncrementalCompilation>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
@@ -182,7 +182,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>3.2.0</version>
         <executions>
           <execution>
             <id>copy-artifact-legal-files</id>
@@ -237,9 +237,11 @@
       </plugin>
       
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+        <inherited>true</inherited>
         <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
+          <appendAssemblyId>true</appendAssemblyId>
           <descriptors>
             <descriptor>src/assemble/connector.xml</descriptor>
           </descriptors>
@@ -250,8 +252,8 @@
               <ConnectorBundle-Name>${project.artifactId}</ConnectorBundle-Name>
               <ConnectorBundle-Version>${project.version}</ConnectorBundle-Version>
             </manifestEntries>
-          </archive>                    
-        </configuration>                
+          </archive>
+        </configuration>
         <executions>
           <execution>
             <id>make-assembly</id>

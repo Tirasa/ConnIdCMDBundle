@@ -15,7 +15,7 @@
  */
 package net.tirasa.connid.bundles.cmd;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,11 +25,10 @@ import org.identityconnectors.framework.common.objects.ConnectorObject;
 import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
-import org.identityconnectors.framework.common.objects.ResultsHandler;
 import org.identityconnectors.framework.common.objects.Uid;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CmdExecuteQueryTest extends AbstractTest {
 
@@ -41,7 +40,7 @@ public class CmdExecuteQueryTest extends AbstractTest {
 
     private AttributesTestValue attrs;
 
-    @Before
+    @BeforeEach
     public void initTest() {
         attrs = new AttributesTestValue();
         connector = new CmdConnector();
@@ -51,7 +50,7 @@ public class CmdExecuteQueryTest extends AbstractTest {
         connector.init(createConfiguration());
     }
 
-    @After
+    @AfterEach
     public final void close() {
         connector.dispose();
     }
@@ -64,16 +63,12 @@ public class CmdExecuteQueryTest extends AbstractTest {
                 new OperationOptionsBuilder().build());
         assertEquals(name.getNameValue(), newAccount.getUidValue());
 
-        final Set<ConnectorObject> actual = new HashSet<ConnectorObject>();
+        final Set<ConnectorObject> actual = new HashSet<>();
         connector.executeQuery(ObjectClass.ACCOUNT,
-                new Operand(Operator.EQ, Uid.NAME, newAccount.getUidValue(), false), new ResultsHandler() {
-
-            @Override
-            public boolean handle(final ConnectorObject connObj) {
-                actual.add(connObj);
-                return true;
-            }
-        }, new OperationOptionsBuilder().build());
+                new Operand(Operator.EQ, Uid.NAME, newAccount.getUidValue(), false), connObj -> {
+                    actual.add(connObj);
+                    return true;
+                }, new OperationOptionsBuilder().build());
         for (ConnectorObject connObj : actual) {
             assertEquals(name.getNameValue(), connObj.getName().getNameValue());
         }

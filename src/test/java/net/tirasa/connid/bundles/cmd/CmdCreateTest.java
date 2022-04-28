@@ -18,9 +18,9 @@ package net.tirasa.connid.bundles.cmd;
 import org.identityconnectors.framework.common.objects.Name;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CmdCreateTest extends AbstractTest {
 
@@ -30,7 +30,7 @@ public class CmdCreateTest extends AbstractTest {
 
     private AttributesTestValue attrs;
 
-    @Before
+    @BeforeEach
     public void initTest() {
         attrs = new AttributesTestValue();
         connector = new CmdConnector();
@@ -40,7 +40,7 @@ public class CmdCreateTest extends AbstractTest {
         connector.init(createConfiguration());
     }
 
-    @After
+    @AfterEach
     public void dispose() {
         connector.dispose();
     }
