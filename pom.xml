@@ -28,7 +28,7 @@
     
   <groupId>net.tirasa.connid.bundles</groupId>
   <artifactId>net.tirasa.connid.bundles.cmd</artifactId>
-  <version>0.5-SNAPSHOT</version>    
+  <version>0.5</version>    
     
   <name>ConnId Bundles: CMD</name>
 
@@ -49,7 +49,7 @@
     <connection>scm:git:git@github.com:Tirasa/ConnIdCMDBundle.git</connection>
     <url>scm:git:git@github.com:Tirasa/ConnIdCMDBundle.git</url>
     <developerConnection>scm:git:git@github.com:Tirasa/ConnIdCMDBundle.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>net.tirasa.connid.bundles.cmd-0.5</tag>
   </scm>
 
   <issueManagement>
