@@ -76,7 +76,7 @@
   </mailingLists>
 
   <properties>
-    <connid.version>1.5.1.0</connid.version>
+    <connid.version>1.5.2.0</connid.version>
         
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
