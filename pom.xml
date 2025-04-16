@@ -63,7 +63,7 @@
   </ciManagement>
 
   <properties>
-    <connid.version>1.5.2.1</connid.version>
+    <connid.version>1.6.0.1</connid.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
